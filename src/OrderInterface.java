@@ -1,7 +1,9 @@
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.Map;
 
 public interface OrderInterface extends Remote {
-    String placeOrder(String customerName, String item, int quantity, double price, String status) throws RemoteException;
+    Order placeOrder(int foodId, int foodQuantity) throws RemoteException;
     Order getOrderDetails(int orderId) throws RemoteException;
+    String reverseString(Order input) throws RemoteException;
 }
