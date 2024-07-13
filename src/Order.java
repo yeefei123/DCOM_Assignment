@@ -17,6 +17,7 @@ public class Order implements Serializable {
         this.status = status;
     }
 
+    // Getter methods
     public int getOrderId() {
         return orderId;
     }
@@ -39,6 +40,31 @@ public class Order implements Serializable {
 
     public String getStatus() {
         return status;
+    }
+
+    // Setter methods
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public void setItem(String item) {
+        this.item = item;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override
