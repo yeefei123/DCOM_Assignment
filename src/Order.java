@@ -2,33 +2,48 @@ import java.io.Serializable;
 
 public class Order implements Serializable {
     private int orderId;
-    private int foodId;
+    private String customerName;
+    private String item;
     private int quantity;
+    private double price;
+    private String status;
 
-    public Order(int orderId, int foodId, int quantity) {
+    public Order(int orderId, String customerName, String item, int quantity, double price, String status) {
         this.orderId = orderId;
-        this.foodId=foodId;
+        this.customerName = customerName;
+        this.item = item;
         this.quantity = quantity;
+        this.price = price;
+        this.status = status;
     }
 
     public int getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(int orderId){
-        this.orderId=orderId;
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public String getItem() {
+        return item;
     }
 
     public int getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity){
-        this.quantity=quantity;
+    public double getPrice() {
+        return price;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     @Override
     public String toString() {
-        return "Order ID: " + orderId + "FoodItem: "+ foodId + ", Quantity: " + quantity ;
+        return "Order ID: " + orderId + ", Customer: " + customerName + ", Item: " + item +
+                ", Quantity: " + quantity + ", Price: " + price + ", Status: " + status;
     }
 }

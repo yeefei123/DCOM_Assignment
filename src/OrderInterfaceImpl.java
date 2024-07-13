@@ -14,23 +14,16 @@ public class OrderInterfaceImpl extends UnicastRemoteObject implements OrderInte
         orderIdCounter = 1;
     }
 
-    public Order placeOrder(int foodId, int foodQuantity) throws RemoteException {
+    @Override
+    public String placeOrder(String customerName, String item, int quantity, double price, String status) throws RemoteException {
         int orderId = orderIdCounter++;
-        Order order = new Order(orderId, foodId, foodQuantity);
+        Order order = new Order(orderId, customerName, item, quantity, price, status);
         orders.put(orderId, order);
-        return order;
+        return "Order placed successfully! " + order.toString();
     }
 
     @Override
     public Order getOrderDetails(int orderId) throws RemoteException {
         return orders.get(orderId);
-    }
-
-    @Override
-
-    public String reverseString(Order input) throws RemoteException {
-
-        return new StringBuilder(String.valueOf(input)).reverse().toString();
-
     }
 }
