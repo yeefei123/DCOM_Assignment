@@ -1,37 +1,55 @@
+import java.io.Serial;
 import java.io.Serializable;
 
 public class FoodItems implements Serializable {
-    private static final long serialVersionUID = 1L;
-    private int foodID;
-    private String name;
-    private double price;
+    @Serial
+    private static final long serialVersionUID = -1618644082963435396L;
+    private String foodID;
+    private String foodName;
+    private double foodPrice;
     private String foodCategory;
 
-    public FoodItems(int foodID, String name, double price, String foodCategory) {
+    public FoodItems(String foodID, String foodName, double foodPrice, String foodCategory) {
         this.foodID = foodID;
-        this.name = name;
-        this.price = price;
-        this.foodCategory=foodCategory;
+        this.foodName = foodName;
+        this.foodPrice = foodPrice;
+        this.foodCategory = foodCategory;
     }
 
-    public int getFoodID() {
+    public String getFoodID() {
         return foodID;
     }
 
-    public String getName() {
-        return name;
+    public String getFoodName() {
+        return foodName;
     }
 
-    public double getPrice() {
-        return price;
+    public double getFoodPrice(){
+        return foodPrice;
     }
 
-    public String getFoodCategory(){
+    public String getFoodCategory() {
         return foodCategory;
+    }
+
+    public void setFoodID(String foodID) {
+        this.foodID = foodID;
+    }
+
+    public void setFoodName(String foodName) {
+        this.foodName = foodName;
+    }
+
+    public void setFoodPrice(double foodPrice) {
+        this.foodPrice = foodPrice;
+    }
+
+    public void setFoodCategory(String foodCategory) {
+        this.foodCategory = foodCategory;
     }
 
     @Override
     public String toString() {
-        return name + " - RM " + price;
+        return foodName + "("+foodPrice+")"+"(" +foodCategory+")" ;
     }
 }
