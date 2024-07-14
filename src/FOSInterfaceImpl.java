@@ -23,7 +23,7 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
         orders = (Map<String, Order>) readFromFile(ORDERS_FILE);
         foodCategories = (Map<String, FoodCategory>) readFromFile(FOOD_CATEGORIES_FILE);
         foodItems = (Map<String, FoodItems>) readFromFile(FOOD_ITEM_FILE);
-        shoppingCart= (Map<String, Cart>) readFromFile(CART_FILE);
+        shoppingCart = (Map<String, Cart>) readFromFile(CART_FILE);
         orderIdCounter = 1;
     }
 
@@ -60,9 +60,9 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
     }
 
     @Override
-    public String placeOrder(String customerName, String item, int quantity, double price, String status) throws RemoteException {
+    public String placeOrder(String customerName, String item, int quantity, double price, String orderType, String status) throws RemoteException {
         int orderId = orderIdCounter++;
-        Order order = new Order(orderId, customerName, item, quantity, price, status);
+        Order order = new Order(orderId, customerName, item, quantity, price, orderType, status);
         orders.put(String.valueOf(orderId), order);
         saveOrders();
         return "Order placed successfully! " + order.toString();
@@ -109,7 +109,7 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
         }
 
         int cartID = shoppingCart.size() + 1;
-        Cart newItem = new Cart(customerName, foodItem, quantity, price);
+        Cart newItem = new Cart(String.valueOf(cartID), customerName, foodItem, quantity, price);
         shoppingCart.put(String.valueOf(cartID), newItem);
 
         // Write the updated shoppingCart back to the file
@@ -117,14 +117,15 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
     }
 
     @Override
-    public void createOrder(String customerName, String item, int quantity, double price, String status) throws RemoteException {
+    public void createOrder(String customerName, String item, int quantity, double price, String orderType, String status) throws RemoteException {
         orders = (Map<String, Order>) readFromFile(ORDERS_FILE);
         if (orders == null) {
             orders = new HashMap<>();
         }
 
         int orderID = orders.size() + 1;
-        Order newItem = new Order(orderID, customerName, item, quantity, price, status);
+        System.out.println(orderID);
+        Order newItem = new Order(orderID, customerName, item, quantity, price, orderType, status);
         orders.put(String.valueOf(orderID), newItem);
         writeToFile(ORDERS_FILE, orders);
     }
@@ -135,9 +136,9 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
             return new HashMap<>(foodCategories);
         } else if ("FoodItems".equalsIgnoreCase(type)) {
             return new HashMap<>(foodItems);
-        }else if ("ShoppingCart".equalsIgnoreCase(type)){
+        } else if ("ShoppingCart".equalsIgnoreCase(type)) {
             return new HashMap<>(shoppingCart);
-        }else if("FoodOrder".equals(type)) {
+        } else if ("FoodOrder".equals(type)) {
             return new HashMap<>(orders);
         } else {
             throw new IllegalArgumentException("Invalid type: " + type);
@@ -187,13 +188,23 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
                 }
                 break;
             case "cart":
-                if(orders.containsKey(ID)){
+                if (orders.containsKey(ID)) {
                     orders.remove(ID);
                     writeToFile(ORDERS_FILE, orders);
-                    System.out.println(("Cart item deleted successfully"));
+                    System.out.println("Cart item deleted successfully.");
+                } else {
+                    throw new RemoteException("Cart item ID not found.");
                 }
+                break;
             default:
                 throw new RemoteException("Invalid delete type.");
         }
+    }
+
+    @Override
+    public void updateCartData(Map<String, ?> updatedCartData) throws RemoteException {
+        shoppingCart = (Map<String, Cart>) updatedCartData;
+        writeToFile(CART_FILE, shoppingCart);
+        System.out.println("Shopping cart updated successfully.");
     }
 }

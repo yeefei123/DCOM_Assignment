@@ -9,18 +9,19 @@ public class Order implements Serializable {
     private String item;
     private int quantity;
     private double price;
+    private String orderType;
     private String status;
 
-    public Order(int orderId, String customerName, String item, int quantity, double price, String status) {
+    public Order(int orderId, String customerName, String item, int quantity, double price, String orderType, String status) {
         this.orderId = orderId;
         this.customerName = customerName;
         this.item = item;
         this.quantity = quantity;
         this.price = price;
+        this.orderType = orderType;
         this.status = status;
     }
 
-    // Getter methods
     public int getOrderId() {
         return orderId;
     }
@@ -45,7 +46,10 @@ public class Order implements Serializable {
         return status;
     }
 
-    // Setter methods
+    public String getOrderType() {
+        return orderType;
+    }
+
     public void setOrderId(int orderId) {
         this.orderId = orderId;
     }
@@ -68,6 +72,10 @@ public class Order implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public void setOrderType(String orderType) {
+        this.orderType = orderType;
     }
 
     @Override

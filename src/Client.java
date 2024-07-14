@@ -53,6 +53,8 @@ public class Client {
                                                 Map<String, ?> categories = stub.viewFoodData("FoodCategory");
                                                 if (categories.isEmpty()) {
                                                     System.out.println("No food categories found.");
+                                                    System.out.println("*".repeat(40));
+                                                    break;
                                                 } else {
                                                     System.out.println("Food Categories:");
                                                     for (Map.Entry<String, ?> entry : categories.entrySet()) {
@@ -75,6 +77,8 @@ public class Client {
                                                     Map<String, ? > categories1 = stub.viewFoodData("FoodCategory");
                                                     if (categories1.isEmpty()) {
                                                         System.out.println("No food categories found.");
+                                                        System.out.println("*".repeat(40));
+                                                        break;
                                                     } else {
                                                         System.out.println("Food Categories:");
                                                         for (Map.Entry<String, ?> entry : categories1.entrySet()) {
@@ -242,7 +246,7 @@ public class Client {
                         System.out.println("2. Shopping Cart");
                         System.out.println("3. Food Order");
                         System.out.println("4. Exit");
-                        System.out.println("Enter number of action to perform or enter -1 to exit:");
+                        System.out.println("Enter number of action to perform:");
 
                         int actionNum = 0;
                         try {
@@ -252,7 +256,7 @@ public class Client {
                             continue;
                         }
 
-                        if (actionNum == -1) {
+                        if (actionNum==4) {
                             break;
                         } else if (actionNum < 1 || actionNum > 4) {
                             System.out.println("Invalid action number. Please choose from 1 to 4.");
@@ -271,6 +275,8 @@ public class Client {
 
                                     if (foodItemsMap.isEmpty()) {
                                         System.out.println("No food items found.");
+                                        System.out.println("*".repeat(40));
+                                        break;
                                     } else {
                                         System.out.println("Food Menu:");
                                         for (Map.Entry<String, ?> entry : foodItemsMap.entrySet()) {
@@ -304,7 +310,7 @@ public class Client {
 
                                     price = selectedItem.getFoodPrice() * foodQuantity;
                                     totalPrice += price;
-                                    selectedItems.add(new Cart("John Doe", selectedItem, foodQuantity, price));
+                                    selectedItems.add(new Cart(null,"John Doe", selectedItem, foodQuantity, price));
                                 }
                                 if(selectedItems.size()>0) {
                                     System.out.println("*".repeat(40));
@@ -334,6 +340,8 @@ public class Client {
                                 Map<String, ?> cartItems = stub.viewFoodData("ShoppingCart");
                                 if (cartItems.isEmpty()) {
                                     System.out.println("No items found in the shopping cart.");
+                                    System.out.println("*".repeat(40));
+                                    break;
                                 } else {
                                     System.out.println("Shopping Cart:");
                                     int i=0;
@@ -360,15 +368,17 @@ public class Client {
                                         while (true) {
                                             if (cartItems.isEmpty()) {
                                                 System.out.println("No items found in the shopping cart.");
+                                                System.out.println("*".repeat(40));
+                                                break;
                                             } else {
                                                 System.out.println("Shopping Cart:");
                                                 int i = 0;
-                                                List<String> johnDoeCartIDs = new ArrayList<>(); // List to store valid cart IDs
+                                                List<String> cartIDs = new ArrayList<>();
                                                 for (Map.Entry<String, ?> entry : cartItems.entrySet()) {
                                                     Cart cartItem = (Cart) entry.getValue();
                                                     if (cartItem.getCustomerName().equals("John Doe")) {
                                                         i++;
-                                                        johnDoeCartIDs.add(entry.getKey()); // Store the cart ID
+                                                        cartIDs.add(entry.getKey());
                                                         System.out.println(i + ": " + cartItem.getFoodItem() + " X " + cartItem.getQuantity() + " Price:" + cartItem.getPrice());
                                                     }
                                                 }
@@ -377,17 +387,35 @@ public class Client {
                                                 int cartNumber = 0;
                                                 try {
                                                     cartNumber = Integer.parseInt(scanner.nextLine());
+                                                    if (cartNumber == -1) {
+                                                        break;
+                                                    }
                                                 } catch (NumberFormatException e) {
                                                     System.out.println("Please enter a valid number to choose.");
                                                     continue;
                                                 }
 
-                                                if (cartNumber == -1) {
+                                                System.out.println("Please select your order type. Enter 1 for dine in, 2 for pickup, or -1 to exit");
+                                                int orderType = 0;
+                                                try{
+                                                    orderType = Integer.parseInt(scanner.nextLine());
+                                                }catch (NumberFormatException e){
+                                                    System.out.println("Please enter number to choose");
+                                                }
+                                                if(orderType==-1) break;
+
+                                                String orderStatus=null;
+                                                if(orderType==1){
+                                                    orderStatus="Dine In";
+                                                }else if(orderType==2){
+                                                    orderStatus="Pick Up";
+                                                }else{
+                                                    System.out.println("Please select 1 or 2 to order");
                                                     break;
                                                 }
 
-                                                if (cartNumber >= 1 && cartNumber <= johnDoeCartIDs.size()) {
-                                                    String selectedCartID = johnDoeCartIDs.get(cartNumber - 1);
+                                                if (cartNumber >= 1 && cartNumber <= cartIDs.size()) {
+                                                    String selectedCartID = cartIDs.get(cartNumber - 1);
                                                     Cart selectedCartItem = (Cart) cartItems.get(selectedCartID);
                                                     if (selectedCartItem != null) {
                                                         System.out.println("Selected Cart Item:");
@@ -397,8 +425,9 @@ public class Client {
                                                         String answer1 = scanner.nextLine();
                                                         if (answer1.equals("y")) {
                                                             try {
-                                                                stub.createOrder("John Doe", selectedCartItem.getFoodItem().getFoodName(), selectedCartItem.getQuantity(), selectedCartItem.getPrice(), "Pending");
-                                                                cartItems.remove(selectedCartID); // Remove item from cart after ordering
+                                                                stub.createOrder("John Doe", selectedCartItem.getFoodItem().getFoodName(), selectedCartItem.getQuantity(), selectedCartItem.getPrice(), orderStatus, "Pending");
+                                                                cartItems.remove(selectedCartID);
+                                                                stub.updateCartData(cartItems);
                                                                 System.out.println("Order placed successfully!");
                                                             } catch (RemoteException e) {
                                                                 System.err.println("Error creating order: " + e.getMessage());
@@ -407,13 +436,13 @@ public class Client {
                                                     } else {
                                                         System.out.println("Invalid cart ID selected.");
                                                     }
-
                                                 } else {
                                                     System.out.println("Invalid cart number selected.");
                                                 }
                                             }
 
                                         }
+                                        break;
                                         case 2:
                                             System.out.println("Enter cart ID to delete or enter -1 to exit:");
                                             int cartID = 0;
@@ -429,12 +458,15 @@ public class Client {
                                     }
                                     System.out.println("*".repeat(40));
                                 }
+                                System.out.println("*".repeat(40));
                                 break;
                             case 3:
                                 System.out.println("This is order that you have made in McGee Restaurant");
                                 Map<String, ? > categories1 = stub.viewFoodData("FoodOrder");
                                 if (categories1.isEmpty()) {
-                                    System.out.println("No food categories found.");
+                                    System.out.println("No food order found.");
+                                    System.out.println("*".repeat(40));
+                                    break;
                                 } else {
                                     System.out.println("Food Orders:");
                                     for (Map.Entry<String, ?> entry : categories1.entrySet()) {
