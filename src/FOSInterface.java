@@ -13,6 +13,6 @@ public interface FOSInterface extends Remote {
     void updateFoodCategoryID(String oldCategoryID, String newCategoryID) throws RemoteException;
     void updateFoodCategoryName(String categoryID,  String newCategoryName) throws RemoteException;
     void delete(String ID, String type) throws RemoteException;
-
+    void updateOrderStatus(String orderID, String newStatus) throws RemoteException;
     void updateCartData(Map<String, ?> updatedCartData) throws RemoteException;
 }

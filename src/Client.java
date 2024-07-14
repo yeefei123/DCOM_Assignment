@@ -30,7 +30,7 @@ public class Client {
                         if (password.equals("-1")) break;
                         if (password.equals("1234")) {
                             while (true) {
-                                System.out.println("Admin Edit Food Menu \n1. Food Category \n2. Food Items \n3. Exit");
+                                System.out.println("Admin Edit Food Menu \n1. Food Category \n2. Food Items \n3. View food order \n4. Exit");
                                 int answer;
                                 try {
                                     answer = Integer.parseInt(scanner.nextLine());
@@ -214,7 +214,7 @@ public class Client {
                                                 }
                                                 System.out.println("Admin delete food items \nEnter food item ID to delete or enter -1 to exit:");
                                                 String foodID = scanner.nextLine().trim();
-                                                if (foodID=="-1") break;
+                                                if (foodID.equals("-1")) break;
                                                 if (foodID.isEmpty()) {
                                                     System.out.println("Invalid input. Please enter food item ID from the list.");
                                                     continue;
@@ -232,6 +232,39 @@ public class Client {
                                             break;
                                     }
                                 } else if (answer ==3){
+                                    while (true) {
+                                    System.out.println("McGee Restaurant Food Orders");
+                                    Map<String, ?> categories1 = stub.viewFoodData("FoodOrder");
+                                    if (categories1.isEmpty()) {
+                                        System.out.println("No food order found.");
+                                        System.out.println("*".repeat(40));
+                                        break;
+                                    } else {
+                                            boolean hasPendingOrders = false;
+                                            System.out.println("Food Orders:");
+                                            for (Map.Entry<String, ?> entry : categories1.entrySet()) {
+                                                Order foodItem = (Order) entry.getValue();
+                                                if (foodItem.getStatus().equals("Pending")) {
+                                                    System.out.println(entry.getKey() + ": " + entry.getValue().toString());
+                                                    hasPendingOrders = true;
+                                                }
+                                            }
+                                            if (!hasPendingOrders) {
+                                                System.out.println("No incoming food orders.");
+                                                break;
+                                            }
+                                            System.out.println("Enter food order ID that you have completed or enter -1 to exit:");
+                                            String foodOrderID = scanner.nextLine();
+                                            if (foodOrderID.equals("-1")) break;
+                                            if (!foodOrderID.isEmpty() && categories1.containsKey(foodOrderID)) {
+                                                stub.updateOrderStatus(foodOrderID, "Completed");
+                                                System.out.println("Order status updated to Completed.");
+                                            } else {
+                                                System.out.println("Please enter a valid food order ID.");
+                                            }
+                                        }
+                                    }
+                                }else if (answer==4){
                                     break;
                                 }
                             }

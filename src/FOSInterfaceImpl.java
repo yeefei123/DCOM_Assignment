@@ -207,4 +207,17 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
         writeToFile(CART_FILE, shoppingCart);
         System.out.println("Shopping cart updated successfully.");
     }
+
+    @Override
+    public void updateOrderStatus(String orderID, String newStatus) throws RemoteException {
+        if (orders.containsKey(orderID)) {
+            Order order = orders.get(orderID);
+            order.setStatus(newStatus);
+            orders.put(orderID, order);
+            writeToFile(ORDERS_FILE, orders);
+            System.out.println("Order status updated successfully.");
+        } else {
+            throw new RemoteException("Order ID not found.");
+        }
+    }
 }
