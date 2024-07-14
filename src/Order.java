@@ -1,6 +1,9 @@
+import java.io.Serial;
 import java.io.Serializable;
 
 public class Order implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -7097736854740125550L;
     private int orderId;
     private String customerName;
     private String item;

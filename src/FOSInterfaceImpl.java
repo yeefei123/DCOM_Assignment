@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterface {
 
-    private Map<Integer, Order> orders;
+    private Map<String, Order> orders;
     private Map<String, FoodCategory> foodCategories;
     private Map<String, FoodItems> foodItems;
     private Map<String, Cart> shoppingCart;
@@ -20,7 +20,7 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
 
     protected FOSInterfaceImpl() throws RemoteException {
         super();
-        orders = new HashMap<>();
+        orders = (Map<String, Order>) readFromFile(ORDERS_FILE);
         foodCategories = (Map<String, FoodCategory>) readFromFile(FOOD_CATEGORIES_FILE);
         foodItems = (Map<String, FoodItems>) readFromFile(FOOD_ITEM_FILE);
         shoppingCart= (Map<String, Cart>) readFromFile(CART_FILE);
@@ -63,7 +63,7 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
     public String placeOrder(String customerName, String item, int quantity, double price, String status) throws RemoteException {
         int orderId = orderIdCounter++;
         Order order = new Order(orderId, customerName, item, quantity, price, status);
-        orders.put(orderId, order);
+        orders.put(String.valueOf(orderId), order);
         saveOrders();
         return "Order placed successfully! " + order.toString();
     }
@@ -117,6 +117,19 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
     }
 
     @Override
+    public void createOrder(String customerName, String item, int quantity, double price, String status) throws RemoteException {
+        orders = (Map<String, Order>) readFromFile(ORDERS_FILE);
+        if (orders == null) {
+            orders = new HashMap<>();
+        }
+
+        int orderID = orders.size() + 1;
+        Order newItem = new Order(orderID, customerName, item, quantity, price, status);
+        orders.put(String.valueOf(orderID), newItem);
+        writeToFile(ORDERS_FILE, orders);
+    }
+
+    @Override
     public Map<String, ?> viewFoodData(String type) throws RemoteException {
         if ("FoodCategory".equalsIgnoreCase(type)) {
             return new HashMap<>(foodCategories);
@@ -124,6 +137,8 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
             return new HashMap<>(foodItems);
         }else if ("ShoppingCart".equalsIgnoreCase(type)){
             return new HashMap<>(shoppingCart);
+        }else if("FoodOrder".equals(type)) {
+            return new HashMap<>(orders);
         } else {
             throw new IllegalArgumentException("Invalid type: " + type);
         }
@@ -152,23 +167,33 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
     }
 
     @Override
-    public void deleteFoodCategory(String categoryID) throws RemoteException {
-        if (foodCategories.containsKey(categoryID)) {
-            foodCategories.remove(categoryID);
-            writeToFile(FOOD_CATEGORIES_FILE, foodCategories);
-        } else {
-            throw new RemoteException("Food category ID not found.");
-        }
-    }
-
-    @Override
-    public void deleteFoodItems(String foodID) throws RemoteException {
-        if (foodItems.containsKey(foodID)) {
-            foodItems.remove(foodID);
-            writeToFile(FOOD_ITEM_FILE, foodItems);
-            System.out.println("Food item deleted successfully.");
-        } else {
-            throw new RemoteException("Food item ID not found.");
+    public void delete(String ID, String type) throws RemoteException {
+        switch (type) {
+            case "category":
+                if (foodCategories.containsKey(ID)) {
+                    foodCategories.remove(ID);
+                    writeToFile(FOOD_CATEGORIES_FILE, foodCategories);
+                } else {
+                    throw new RemoteException("Food category ID not found.");
+                }
+                break;
+            case "item":
+                if (foodItems.containsKey(ID)) {
+                    foodItems.remove(ID);
+                    writeToFile(FOOD_ITEM_FILE, foodItems);
+                    System.out.println("Food item deleted successfully.");
+                } else {
+                    throw new RemoteException("Food item ID not found.");
+                }
+                break;
+            case "cart":
+                if(orders.containsKey(ID)){
+                    orders.remove(ID);
+                    writeToFile(ORDERS_FILE, orders);
+                    System.out.println(("Cart item deleted successfully"));
+                }
+            default:
+                throw new RemoteException("Invalid delete type.");
         }
     }
 }
