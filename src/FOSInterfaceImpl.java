@@ -9,10 +9,13 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
     private Map<Integer, Order> orders;
     private Map<String, FoodCategory> foodCategories;
     private Map<String, FoodItems> foodItems;
+    private Map<String, Cart> shoppingCart;
+
     int foodCategoriesCount;
     private int orderIdCounter;
     private static final String FOOD_CATEGORIES_FILE = "food_categories.ser";
     private static final String FOOD_ITEM_FILE = "food_menu.ser";
+    private static final String CART_FILE = "food_cart.ser";
     private static final String ORDERS_FILE = "orders.ser";
 
     protected FOSInterfaceImpl() throws RemoteException {
@@ -20,10 +23,22 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
         orders = new HashMap<>();
         foodCategories = (Map<String, FoodCategory>) readFromFile(FOOD_CATEGORIES_FILE);
         foodItems = (Map<String, FoodItems>) readFromFile(FOOD_ITEM_FILE);
+        shoppingCart= (Map<String, Cart>) readFromFile(CART_FILE);
         orderIdCounter = 1;
     }
 
     private Map<?, ?> readFromFile(String filename) {
+        File file = new File(filename);
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+                System.out.println("Created new file: " + filename);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return new HashMap<>();
+        }
+
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename))) {
             return (Map<?, ?>) in.readObject();
         } catch (EOFException e) {
@@ -54,11 +69,7 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
     }
 
     private void saveOrders() {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(ORDERS_FILE))) {
-            out.writeObject(orders);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        writeToFile(ORDERS_FILE, orders);
     }
 
     @Override
@@ -82,12 +93,27 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
         int foodID = foodItems.size() + 1;
         String foodID1 = String.valueOf(foodID);
         FoodItems newItem = new FoodItems(foodID1, name, price, foodCategory);
-
-        // Add the new food item to the existing map
         foodItems.put(foodID1, newItem);
 
         // Write the updated map back to the file
         writeToFile(FOOD_ITEM_FILE, foodItems);
+    }
+
+    @Override
+    public void createCart(String customerName, FoodItems foodItem, int quantity, double price) throws RemoteException {
+        shoppingCart = (Map<String, Cart>) readFromFile(CART_FILE);
+
+        // Check if the shoppingCart is null, initialize it if it is
+        if (shoppingCart == null) {
+            shoppingCart = new HashMap<>();
+        }
+
+        int cartID = shoppingCart.size() + 1;
+        Cart newItem = new Cart(customerName, foodItem, quantity, price);
+        shoppingCart.put(String.valueOf(cartID), newItem);
+
+        // Write the updated shoppingCart back to the file
+        writeToFile(CART_FILE, shoppingCart);
     }
 
     @Override
@@ -96,6 +122,8 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
             return new HashMap<>(foodCategories);
         } else if ("FoodItems".equalsIgnoreCase(type)) {
             return new HashMap<>(foodItems);
+        }else if ("ShoppingCart".equalsIgnoreCase(type)){
+            return new HashMap<>(shoppingCart);
         } else {
             throw new IllegalArgumentException("Invalid type: " + type);
         }
@@ -143,5 +171,4 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
             throw new RemoteException("Food item ID not found.");
         }
     }
-
 }

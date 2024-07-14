@@ -1,5 +1,7 @@
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -159,7 +161,7 @@ public class Client {
                                             } else {
                                                 System.out.println("Food Items:");
                                                 for (Map.Entry<String, ?> entry : categories.entrySet()) {
-                                                    System.out.println(entry.getKey() + ": " + entry.getValue());
+                                                    System.out.println(entry.getKey() + ": " + entry.getValue().toString());
                                                 }
                                             }
                                            break;
@@ -233,10 +235,149 @@ public class Client {
                         }
                     }
                 } else if (role == 2) {
-                    String response = stub.placeOrder("John Doe", "Pizza", 2, 19.99, "Processing");
-                    System.out.println(response);
-                    Order order = stub.getOrderDetails(1);
-                    System.out.println("Retrieved Order: " + order.toString());
+                    while (true) {
+                        System.out.println("Welcome to McGee Food Ordering System");
+                        System.out.println("1. Food Menu");
+                        System.out.println("2. Shopping Cart");
+                        System.out.println("3. Food Order");
+                        System.out.println("4. Exit");
+                        System.out.println("Enter number of action to perform or enter -1 to exit:");
+
+                        int actionNum = 0;
+                        try {
+                            actionNum = Integer.parseInt(scanner.nextLine());
+                        } catch (NumberFormatException e) {
+                            System.out.println("Please enter a number to choose an action.");
+                            continue;
+                        }
+
+                        if (actionNum == -1) {
+                            break;
+                        } else if (actionNum < 1 || actionNum > 4) {
+                            System.out.println("Invalid action number. Please choose from 1 to 4.");
+                            continue;
+                        }
+
+                        switch (actionNum) {
+                            case 1:
+                                double totalPrice = 0;
+                                List<Cart> selectedItems = new ArrayList<>();
+                                double price = 0;
+
+                                while (true) {
+                                    Map<String, ?> foodItemsMap = stub.viewFoodData("FoodItems");
+                                    Map<String, ?> foodCategoriesMap = stub.viewFoodData("FoodCategory");
+
+                                    if (foodItemsMap.isEmpty()) {
+                                        System.out.println("No food items found.");
+                                    } else {
+                                        System.out.println("Food Menu:");
+                                        for (Map.Entry<String, ?> entry : foodItemsMap.entrySet()) {
+                                            FoodItems foodItem = (FoodItems) entry.getValue();
+                                            FoodCategory foodCategory = (FoodCategory) foodCategoriesMap.get(foodItem.getFoodCategory());
+                                            System.out.println(foodItem.getFoodID() + ": " + foodItem.getFoodName() + " (" + foodItem.getFoodPrice() + ") - " + foodCategory);
+                                        }
+                                    }
+
+                                    System.out.println("Enter food ID to order or enter -1 to exit:");
+                                    String foodID = scanner.nextLine();
+                                    if (foodID.equals("-1")) break;
+
+                                    FoodItems selectedItem = (FoodItems) foodItemsMap.get(foodID);
+                                    if (selectedItem == null) {
+                                        System.out.println("Invalid food ID. Please try again.");
+                                        continue;
+                                    }
+
+                                    System.out.println("Enter quantity:");
+                                    int foodQuantity;
+                                    try {
+                                        foodQuantity = Integer.parseInt(scanner.nextLine());
+                                    } catch (NumberFormatException e) {
+                                        System.out.println("Invalid quantity. Please enter a valid number.");
+                                        continue;
+                                    }
+
+                                    price = selectedItem.getFoodPrice() * foodQuantity;
+                                    totalPrice += price;
+                                    selectedItems.add(new Cart("John Doe", selectedItem, foodQuantity, price ));
+                                }
+                                System.out.println("*".repeat(40));
+                                System.out.println("Selected items:");
+                                for (Cart item : selectedItems) {
+                                    double itemTotalPrice = item.getFoodItem().getFoodPrice() * item.getQuantity();
+                                    System.out.println(item.getFoodItem().getFoodName() + " - Quantity: " + item.getQuantity() + ", Total price: " + itemTotalPrice);
+                                }
+                                System.out.println("Total price for all selected items: " + totalPrice);
+                                System.out.println("Do you want to add these selected items into your cart? Enter y or n");
+                                String answer = scanner.nextLine();
+                                if (answer.equalsIgnoreCase("y")) {
+                                    for (Cart item : selectedItems) {
+                                        stub.createCart("John Doe", item.getFoodItem(), item.getQuantity(), item.getPrice());
+                                    }
+                                    System.out.println("Items added to cart successfully.");
+                                } else {
+                                    System.out.println("Items not added to cart.");
+                                }
+                                System.out.println("*".repeat(40));
+                                break;
+
+                            case 2:
+                                System.out.println("This is items in your shopping cart.");
+                                Map<String, ?> cartItems = stub.viewFoodData("ShoppingCart");
+                                if (cartItems.isEmpty()) {
+                                    System.out.println("No items found in the shopping cart.");
+                                } else {
+                                    System.out.println("Shopping Cart:");
+                                    int i=0;
+                                    for (Map.Entry<String, ?> entry : cartItems.entrySet()) {
+                                        Cart cartItem = (Cart) entry.getValue();
+                                        if (cartItem.getCustomerName().equals("John Doe")) {
+                                            i++;
+                                            System.out.println(i+ ": "  + cartItem.getFoodItem()+ " X "+ cartItem.getQuantity() + " Price:" +cartItem.getPrice());
+                                        }
+                                    }
+                                }
+                                while (true) {
+                                    System.out.println("*".repeat(40));
+                                    System.out.print("1. Order \n2. Remove items from shopping cart \n3.Exit \n");
+                                    int choice = 0;
+                                    try {
+                                        choice = Integer.parseInt(scanner.nextLine());
+                                    } catch (NumberFormatException e) {
+                                        System.out.println("Please enter number to choose");
+                                    }
+                                    switch (choice){
+                                        case 1:
+                                            while(true) {
+                                                System.out.println("Enter cart ID to choose or enter -1 to exit");
+                                                int cartID = 0;
+                                                if(cartID==-1) break;
+                                                try {
+                                                    cartID = Integer.parseInt(scanner.nextLine());
+                                                } catch (NumberFormatException e) {
+                                                    System.out.println("Please enter number to choose");
+                                                }
+                                            }
+                                        case 2:
+                                            break;
+                                        case 3:
+                                            break;
+                                        default:
+                                            System.out.println("Invalid choice");
+                                            break;
+                                    }
+                                    System.out.println("*".repeat(40));
+                                }
+                            case 3:
+                                break;
+                            case 4:
+                                break;
+                            default:
+                                System.out.println("Invalid choice");
+                                break;
+                        }
+                    }
                 } else if(role==3) {
                     System.exit(0);
                 }else {
