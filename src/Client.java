@@ -200,7 +200,119 @@ public class Client {
                                             }
                                             break;
                                         case 3:
+
+                                            while (true) {
+
+                                                Map<String,?> categories1 = stub.viewFoodData("FoodItems");
+
+                                                if (categories1.isEmpty()) {
+
+                                                    System.out.println("No food items found.");
+
+                                                } else {
+
+                                                    System.out.println("Food Items:");
+
+                                                    for (Map.Entry<String,?> entry : categories1.entrySet()) {
+
+                                                        System.out.println(entry.getKey() + ": " + entry.getValue().toString());
+
+                                                    }
+
+                                                }
+
+                                                System.out.println("Enter food item ID to modify or enter -1 to exit:");
+
+                                                String foodID = scanner.nextLine().trim();
+
+                                                if (foodID.equals("-1")) break;
+
+                                                if (categories1.containsKey(foodID)) {
+
+                                                    System.out.println("Do you want to change food item name or food item price? \n1. Food Item Name \n2. Food Item Price \n3. Back");
+
+                                                    int answer2;
+
+                                                    try {
+
+                                                        answer2 = Integer.parseInt(scanner.nextLine());
+
+                                                    } catch (NumberFormatException e) {
+
+                                                        System.out.println("Invalid input. Please enter a number.");
+
+                                                        continue;
+
+                                                    }
+
+                                                    if (answer2 == 1) {
+
+                                                        System.out.println("Enter new food item name:");
+
+                                                        String newFoodName = scanner.nextLine().trim();
+
+                                                        try {
+
+                                                            stub.updateFoodItemName(foodID, newFoodName);
+
+                                                            System.out.println("Food item name updated successfully.");
+
+                                                        } catch (RemoteException e) {
+
+                                                            System.out.println("Error updating food item name: " + e.getMessage());
+
+                                                        }
+
+                                                    } else if (answer2 == 2) {
+
+                                                        System.out.println("Enter new food item price:");
+
+                                                        double newFoodPrice;
+
+                                                        try {
+
+                                                            newFoodPrice = Double.parseDouble(scanner.nextLine());
+
+                                                        } catch (NumberFormatException e) {
+
+                                                            System.out.println("Invalid input. Please enter a valid price.");
+
+                                                            continue;
+
+                                                        }
+
+                                                        try {
+
+                                                            stub.updateFoodItemPrice(foodID, newFoodPrice);
+
+                                                            System.out.println("Food item price updated successfully.");
+
+                                                        } catch (RemoteException e) {
+
+                                                            System.out.println("Error updating food item price: " + e.getMessage());
+
+                                                        }
+
+                                                    } else if (answer2 == 3) {
+
+                                                        break;
+
+                                                    } else {
+
+                                                        System.out.println("Please choose from the menu number.");
+
+                                                    }
+
+                                                } else {
+
+                                                    System.out.println("Food item ID not found. Please try again.");
+
+                                                }
+
+                                            }
+
                                             break;
+
                                         case 4:
                                             while (true) {
                                                 Map<String, ?> categories1 = stub.viewFoodData("FoodItems");

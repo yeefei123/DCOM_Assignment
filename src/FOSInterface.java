@@ -15,4 +15,6 @@ public interface FOSInterface extends Remote {
     void delete(String ID, String type) throws RemoteException;
     void updateOrderStatus(String orderID, String newStatus) throws RemoteException;
     void updateCartData(Map<String, ?> updatedCartData) throws RemoteException;
+    void updateFoodItemName(String foodID, String newFoodName) throws RemoteException;
+    void updateFoodItemPrice(String foodID, double newFoodPrice) throws RemoteException;
 }
