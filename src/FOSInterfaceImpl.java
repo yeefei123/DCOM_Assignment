@@ -9,12 +9,14 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
     private Map<String, Order> orders;
     private Map<String, FoodCategory> foodCategories;
     private Map<String, FoodItems> foodItems;
+    private Map<String, DrinkItems> drinkItems;
     private Map<String, Cart> shoppingCart;
 
     int foodCategoriesCount;
     private int orderIdCounter;
     private static final String FOOD_CATEGORIES_FILE = "food_categories.ser";
     private static final String FOOD_ITEM_FILE = "food_menu.ser";
+    private static final String DRINK_ITEM_FILE = "drink_menu.ser";
     private static final String CART_FILE = "food_cart.ser";
     private static final String ORDERS_FILE = "orders.ser";
 
@@ -22,6 +24,7 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
         super();
         orders = (Map<String, Order>) readFromFile(ORDERS_FILE);
         foodCategories = (Map<String, FoodCategory>) readFromFile(FOOD_CATEGORIES_FILE);
+        drinkItems = (Map<String, DrinkItems>) readFromFile(DRINK_ITEM_FILE);
         foodItems = (Map<String, FoodItems>) readFromFile(FOOD_ITEM_FILE);
         shoppingCart = (Map<String, Cart>) readFromFile(CART_FILE);
         orderIdCounter = 1;
@@ -88,22 +91,27 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
     public void createFoodItems(String name, double price, String foodCategory) throws RemoteException {
         // Read the existing food items from the file
         foodItems = (Map<String, FoodItems>) readFromFile(FOOD_ITEM_FILE);
-
-        // Create the new food item
         int foodID = foodItems.size() + 1;
         String foodID1 = String.valueOf(foodID);
         FoodItems newItem = new FoodItems(foodID1, name, price, foodCategory);
         foodItems.put(foodID1, newItem);
-
-        // Write the updated map back to the file
         writeToFile(FOOD_ITEM_FILE, foodItems);
+    }
+
+    @Override
+    public void createDrinkItems(String name, double price) throws RemoteException {
+        drinkItems = (Map<String, DrinkItems>) readFromFile(DRINK_ITEM_FILE);
+        int foodID = drinkItems.size() + 1;
+        String foodID1 = String.valueOf(foodID);
+        DrinkItems newItem = new DrinkItems(foodID1, name, price);
+        drinkItems.put(foodID1, newItem);
+        writeToFile(DRINK_ITEM_FILE, drinkItems);
     }
 
     @Override
     public void createCart(String customerName, FoodItems foodItem, int quantity, double price) throws RemoteException {
         shoppingCart = (Map<String, Cart>) readFromFile(CART_FILE);
 
-        // Check if the shoppingCart is null, initialize it if it is
         if (shoppingCart == null) {
             shoppingCart = new HashMap<>();
         }
@@ -111,8 +119,6 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
         int cartID = shoppingCart.size() + 1;
         Cart newItem = new Cart(String.valueOf(cartID), customerName, foodItem, quantity, price);
         shoppingCart.put(String.valueOf(cartID), newItem);
-
-        // Write the updated shoppingCart back to the file
         writeToFile(CART_FILE, shoppingCart);
     }
 
@@ -134,7 +140,9 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
     public Map<String, ?> viewFoodData(String type) throws RemoteException {
         if ("FoodCategory".equalsIgnoreCase(type)) {
             return new HashMap<>(foodCategories);
-        } else if ("FoodItems".equalsIgnoreCase(type)) {
+        } else if ("DrinkItems".equalsIgnoreCase(type)) {
+            return new HashMap<>(drinkItems);
+        }else if ("FoodItems".equalsIgnoreCase(type)) {
             return new HashMap<>(foodItems);
         } else if ("ShoppingCart".equalsIgnoreCase(type)) {
             return new HashMap<>(shoppingCart);
@@ -187,6 +195,15 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
                     throw new RemoteException("Food item ID not found.");
                 }
                 break;
+            case "drink":
+                if (drinkItems.containsKey(ID)) {
+                    drinkItems.remove(ID);
+                    writeToFile(DRINK_ITEM_FILE, drinkItems);
+                    System.out.println("Drink item deleted successfully.");
+                } else {
+                    throw new RemoteException("Food item ID not found.");
+                }
+                break;
             case "cart":
                 if (orders.containsKey(ID)) {
                     orders.remove(ID);
@@ -222,52 +239,55 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
     }
 
     @Override
-
-    public void updateFoodItemName(String foodID, String newFoodName) throws RemoteException {
-
-        if (foodItems.containsKey(foodID)) {
-
-            FoodItems foodItem = foodItems.get(foodID);
-
-            foodItem.setFoodName(newFoodName);
-
-            foodItems.put(foodID, foodItem);
-
-            System.out.println("Food item name updated successfully.");
-
-            writeToFile(FOOD_ITEM_FILE, foodItems);
-
-        } else {
-
-            System.out.println("Food item ID not found. Please try again.");
-
+    public void updateFoodItemName(String foodID, String newFoodName, String type) throws RemoteException {
+        if(type.equals("FoodItems")) {
+            if (foodItems.containsKey(foodID)) {
+                FoodItems foodItem = foodItems.get(foodID);
+                foodItem.setFoodName(newFoodName);
+                foodItems.put(foodID, foodItem);
+                System.out.println("Food item name updated successfully.");
+                writeToFile(FOOD_ITEM_FILE, foodItems);
+            } else {
+                System.out.println("Food item ID not found. Please try again.");
+            }
         }
-
+        if(type.equals("DrinkItems")) {
+            if (drinkItems.containsKey(foodID)) {
+                DrinkItems foodItem = drinkItems.get(foodID);
+                foodItem.setFoodName(newFoodName);
+                drinkItems.put(foodID, foodItem);
+                System.out.println("Food item name updated successfully.");
+                writeToFile(DRINK_ITEM_FILE, drinkItems);
+            } else {
+                System.out.println("Food item ID not found. Please try again.");
+            }
+        }
     }
-
-
 
     @Override
 
-    public void updateFoodItemPrice(String foodID, double newFoodPrice) throws RemoteException {
-
-        if (foodItems.containsKey(foodID)) {
-
-            FoodItems foodItem = foodItems.get(foodID);
-
-            foodItem.setFoodPrice(newFoodPrice);
-
-            foodItems.put(foodID, foodItem);
-
-            System.out.println("Food item price updated successfully.");
-
-            writeToFile(FOOD_ITEM_FILE, foodItems);
-
-        } else {
-
-            System.out.println("Food item ID not found. Please try again.");
-
+    public void updateFoodItemPrice(String foodID, double newFoodPrice, String type) throws RemoteException {
+        if(type.equals("FoodItems")) {
+            if (foodItems.containsKey(foodID)) {
+                FoodItems foodItem = foodItems.get(foodID);
+                foodItem.setFoodPrice(newFoodPrice);
+                foodItems.put(foodID, foodItem);
+                System.out.println("Food item price updated successfully.");
+                writeToFile(FOOD_ITEM_FILE, foodItems);
+            } else {
+                System.out.println("Food item ID not found. Please try again.");
+            }
         }
-
+        if(type.equals("DrinkItems")) {
+            if (drinkItems.containsKey(foodID)) {
+                DrinkItems foodItem = drinkItems.get(foodID);
+                foodItem.setFoodPrice(newFoodPrice);
+                drinkItems.put(foodID, foodItem);
+                System.out.println("Food item price updated successfully.");
+                writeToFile(DRINK_ITEM_FILE, drinkItems);
+            } else {
+                System.out.println("Food item ID not found. Please try again.");
+            }
+        }
     }
 }

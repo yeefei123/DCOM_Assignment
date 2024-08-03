@@ -7,6 +7,8 @@ public interface FOSInterface extends Remote {
     Order getOrderDetails(int orderId) throws RemoteException;
     void createFoodCategory(String categoryID, String categoryName) throws RemoteException;
     void createFoodItems(String name, double price, String foodCategory) throws RemoteException;
+    void createDrinkItems(String name, double price) throws RemoteException;
+
     void createCart(String customerName, FoodItems foodItems, int quantity, double price) throws RemoteException;
     void createOrder(String customerName, String item, int quantity, double price, String orderType, String status) throws RemoteException;
     Map<String, ?> viewFoodData(String type) throws RemoteException;
@@ -15,6 +17,6 @@ public interface FOSInterface extends Remote {
     void delete(String ID, String type) throws RemoteException;
     void updateOrderStatus(String orderID, String newStatus) throws RemoteException;
     void updateCartData(Map<String, ?> updatedCartData) throws RemoteException;
-    void updateFoodItemName(String foodID, String newFoodName) throws RemoteException;
-    void updateFoodItemPrice(String foodID, double newFoodPrice) throws RemoteException;
+    void updateFoodItemName(String foodID, String newFoodName, String type) throws RemoteException;
+    void updateFoodItemPrice(String foodID, double newFoodPrice, String type) throws RemoteException;
 }
