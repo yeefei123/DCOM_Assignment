@@ -1,6 +1,12 @@
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
+import java.io.FileInputStream;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +15,31 @@ import java.util.Scanner;
 public class Client {
     public static void main(String[] args) {
         try {
-            Registry registry = LocateRegistry.getRegistry("localhost");
+            // Load keystore for the client
+            KeyStore keyStore = KeyStore.getInstance("PKCS12");
+            keyStore.load(new FileInputStream("C:\\Users\\yeefei\\IdeaProjects\\DCOM_Assignment\\rmi-client.p12"), "password".toCharArray());
+
+            // Set up key and trust managers
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            kmf.init(keyStore, "password".toCharArray());
+
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            tmf.init(keyStore);
+
+            // Set up SSL context
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+
+            // Create SSL socket factory
+            SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+
+            // Create RMI client socket factory
+            CustomRMIClientSocketFactory customClientSocketFactory = new CustomRMIClientSocketFactory(sslSocketFactory);
+
+            // Get the RMI registry
+            Registry registry = LocateRegistry.getRegistry("localhost", 1099, customClientSocketFactory);
+
+            // Lookup the remote object
             FOSInterface stub = (FOSInterface) registry.lookup("FOSInterface");
 
             while (true) {
