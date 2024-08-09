@@ -90,7 +90,6 @@ public class Client {
                                                     for (Map.Entry<String, ?> entry : categories.entrySet()) {
                                                         System.out.println(entry.getKey() + ": " + entry.getValue());
                                                     }
-                                                    System.out.println("*".repeat(40));
                                                 }
                                                 break;
                                             case 2:
@@ -100,7 +99,6 @@ public class Client {
                                                 if (categoryID.equals("-1")) break;
                                                 System.out.println("Enter food category name:");
                                                 String categoryName = scanner.nextLine();
-                                                if (categoryID.equals("-1")) break;
                                                 stub.createFoodCategory(categoryID, categoryName);
                                                 System.out.println("Food category created successfully.");
                                                 break;
@@ -154,9 +152,7 @@ public class Client {
                                                     System.out.println("Admin delete food category");
                                                     Map<String, ?> categories1 = stub.viewFoodData("FoodCategory");
                                                     if (categories1.isEmpty()) {
-                                                        System.out.println("*".repeat(40));
                                                         System.out.println("No food categories found.");
-                                                        System.out.println("*".repeat(40));
                                                     } else {
                                                         System.out.println("Food Categories:");
                                                         for (Map.Entry<String, ?> entry : categories1.entrySet()) {
@@ -168,10 +164,8 @@ public class Client {
                                                     if (categoryIDToDelete.equals("-1")) break;
                                                     if (!categoryIDToDelete.isEmpty() && categories1.containsKey(categoryIDToDelete)) {
                                                         stub.delete(categoryIDToDelete, "category");
-                                                        System.out.println("Food Category Deleted successfully.");
-                                                        System.out.println("*".repeat(40));
                                                     }else{
-                                                        System.out.println("Food 1 ID not found. Please try again.");
+                                                        System.out.println("Food Category ID not found. Please try again.");
                                                     }
                                                 }
                                                 break;
@@ -184,7 +178,8 @@ public class Client {
                                         if (choice == 5) break;
                                     }
                                 } else if (answer == 2) {
-                                    System.out.println("Admin Edit Food Items:\n1. View Menu Items\n2. Create Menu Items\n3. Update Menu Items \n4. Delete Menu Items \n5. Exit");
+                                    System.out.println("Admin Edit Food Items");
+                                    System.out.println("Admin Edit Food Items:\n1. View Food Items\n2. Create Food Items\n3. Update Food Items \n4. Delete Food Items \n5. Exit");
                                     int choice;
                                     try {
                                         choice = Integer.parseInt(scanner.nextLine());
@@ -197,146 +192,98 @@ public class Client {
                                         case 1:
                                             Map<String, ?> categories = stub.viewFoodData("FoodItems");
                                             if (categories.isEmpty()) {
-                                                System.out.println("*".repeat(40));
-                                                System.out.println("No food items found.");
-                                                System.out.println("*".repeat(40));
+                                                System.out.println("No food categories found.");
                                             } else {
                                                 System.out.println("Food Items:");
                                                 for (Map.Entry<String, ?> entry : categories.entrySet()) {
                                                     System.out.println(entry.getKey() + ": " + entry.getValue().toString());
                                                 }
-                                                System.out.println("*".repeat(40));
-                                            }
-
-                                            Map<String, ?> categories2 = stub.viewFoodData("DrinkItems");
-                                            if (categories2.isEmpty()) {
-                                                System.out.println("No drink items found.");
-                                                System.out.println("*".repeat(40));
-                                            } else {
-                                                System.out.println("Drink Items:");
-                                                for (Map.Entry<String, ?> entry : categories2.entrySet()) {
-                                                    System.out.println(entry.getKey() + ": " + entry.getValue().toString());
-                                                }
-                                                System.out.println("*".repeat(40));
-                                            }
-                                           break;
-                                        case 2:
-                                            while (true) {
-                                                System.out.println("Create Food Item for McGee\nIf you want to exit, please enter -1");
-                                                System.out.println("1. Food Item \n2. Drink Item");
-                                                int choice1;
-                                                try {
-                                                    choice1 = Integer.parseInt(scanner.nextLine());
-                                                } catch (NumberFormatException e) {
-                                                    System.out.println("Invalid input. Please enter a number.");
-                                                    continue;
-                                                }
-                                                if (choice1==-1) break;
-                                                switch (choice1) {
-                                                    case 1:
-                                                        System.out.println("Enter food item name to add:");
-                                                        String foodName = scanner.nextLine().trim();
-                                                        if (foodName.equals("-1")) break;
-                                                        System.out.println("Enter food price:");
-                                                        double foodPrice = Double.parseDouble(scanner.nextLine());
-                                                        if (foodPrice==-1) break;
-                                                        Map<String, ?> categories1 = stub.viewFoodData("FoodCategory");
-                                                        if (categories1.isEmpty()) {
-                                                            System.out.println("*".repeat(40));
-                                                            System.out.println("No food categories found.");
-                                                            System.out.println("*".repeat(40));
-                                                        } else {
-                                                            System.out.println("Food Categories:");
-                                                            for (Map.Entry<String, ?> entry : categories1.entrySet()) {
-                                                                System.out.println(entry.getKey() + ": " + entry.getValue().toString());
-                                                            }
-                                                            System.out.println("*".repeat(40));
-                                                        }
-                                                        System.out.println("Enter food category ID for the new food item:");
-                                                        String foodCategoryID = scanner.nextLine().trim();
-                                                        if (foodPrice == -1) break;
-
-                                                        if (categories1.containsKey(foodCategoryID)) {
-                                                            FoodCategory foodCategory = (FoodCategory) categories1.get(foodCategoryID);
-                                                            String categoryName = foodCategory.getCategoryName();
-                                                            if (!foodCategoryID.isEmpty() && !foodName.isEmpty() && foodPrice > 0) {
-                                                                stub.createFoodItems(foodName, foodPrice, categoryName);
-                                                                System.out.println("Food Item created successfully.");
-                                                                System.out.println("*".repeat(40));
-                                                            }else {
-                                                                System.out.println("Please select food category ID from the list.");
-                                                                System.out.println("*".repeat(40));
-                                                            }
-                                                        } else {
-                                                            System.out.println("Please select food category ID from the list.");
-                                                            System.out.println("*".repeat(40));
-                                                        }
-                                                        break;
-                                                    case 2:
-                                                        System.out.println("Enter drink item name to add:");
-                                                        String drinkName = scanner.nextLine().trim();
-                                                        if (drinkName.equals("-1")) break;
-                                                        System.out.println("Enter drink price:");
-                                                        double drinkPrice = Double.parseDouble(scanner.nextLine());
-                                                        if (drinkPrice==-1) break;
-                                                        if (drinkPrice > 0) {
-                                                            stub.createDrinkItems(drinkName, drinkPrice);
-                                                            System.out.println("Drink Item created successfully.");
-                                                            System.out.println("*".repeat(40));
-                                                        }
-                                                        break;
-                                                    default:
-                                                        break;
-                                                }
                                             }
                                             break;
-                                        case 3:
-                                            System.out.println("Which category of food do you want to update?");
-                                            System.out.println("1. Food Items \n2. Drink Items");
-                                            int choice1;
-                                            try {
-                                                choice1 = Integer.parseInt(scanner.nextLine());
-                                            } catch (NumberFormatException e) {
-                                                System.out.println("Invalid input. Please enter a number.");
-                                                continue;
-                                            }
-                                            if (choice1==-1) break;
-                                            switch (choice1){
-                                                case 1:
+                                        case 2:
                                             while (true) {
-                                                Map<String, ?> categories1 = stub.viewFoodData("FoodItems");
+                                                System.out.println("Create Food Category for McGee\nIf you want to exit, please enter -1");
+                                                System.out.println("Enter food item name to add:");
+                                                String foodName = scanner.nextLine().trim();
+                                                if (foodName.equals("-1")) break;
+                                                System.out.println("Enter food price:");
+                                                double foodPrice = Double.parseDouble(scanner.nextLine());
+                                                Map<String, ?> categories1 = stub.viewFoodData("FoodCategory");
                                                 if (categories1.isEmpty()) {
-                                                    System.out.println("*".repeat(40));
-                                                    System.out.println("No food items found.");
-                                                    System.out.println("*".repeat(40));
+                                                    System.out.println("No food categories found.");
                                                 } else {
-                                                    System.out.println("Food Items:");
+                                                    System.out.println("Food Categories:");
                                                     for (Map.Entry<String, ?> entry : categories1.entrySet()) {
                                                         System.out.println(entry.getKey() + ": " + entry.getValue().toString());
                                                     }
                                                 }
+                                                System.out.println("Enter food category ID for the new food item:");
+                                                String foodCategoryID = scanner.nextLine().trim();
+                                                if (foodPrice == -1) break;
+                                                if(categories1.containsKey(foodCategoryID)) {
+                                                    if (!foodCategoryID.isEmpty() && !foodName.isEmpty() && foodPrice > 0) {
+                                                        stub.createFoodItems(foodName, foodPrice, foodCategoryID);
+                                                    }
+                                                }else{
+                                                    System.out.println("Please select food category ID from the list.");
+                                                }
+                                            }
+                                            break;
+                                        case 3:
+
+                                            while (true) {
+
+                                                Map<String,?> categories1 = stub.viewFoodData("FoodItems");
+
+                                                if (categories1.isEmpty()) {
+
+                                                    System.out.println("No food items found.");
+
+                                                } else {
+
+                                                    System.out.println("Food Items:");
+
+                                                    for (Map.Entry<String,?> entry : categories1.entrySet()) {
+
+                                                        System.out.println(entry.getKey() + ": " + entry.getValue().toString());
+
+                                                    }
+
+                                                }
+
                                                 System.out.println("Enter food item ID to modify or enter -1 to exit:");
+
                                                 String foodID = scanner.nextLine().trim();
+
                                                 if (foodID.equals("-1")) break;
+
                                                 if (categories1.containsKey(foodID)) {
+
                                                     System.out.println("Do you want to change food item name or food item price? \n1. Food Item Name \n2. Food Item Price \n3. Back");
+
                                                     int answer2;
+
                                                     try {
+
                                                         answer2 = Integer.parseInt(scanner.nextLine());
+
                                                     } catch (NumberFormatException e) {
+
                                                         System.out.println("Invalid input. Please enter a number.");
+
                                                         continue;
+
                                                     }
 
                                                     if (answer2 == 1) {
                                                         System.out.println("Enter new food item name:");
                                                         String newFoodName = scanner.nextLine().trim();
                                                         try {
-                                                            stub.updateFoodItemName(foodID, newFoodName, "FoodItems");
+                                                            stub.updateFoodItemName(foodID, newFoodName);
                                                             System.out.println("Food item name updated successfully.");
-                                                            System.out.println("*".repeat(40));
                                                         } catch (RemoteException e) {
                                                             System.out.println("Error updating food item name: " + e.getMessage());
+
                                                         }
                                                     } else if (answer2 == 2) {
                                                         System.out.println("Enter new food item price:");
@@ -345,13 +292,11 @@ public class Client {
                                                             newFoodPrice = Double.parseDouble(scanner.nextLine());
                                                         } catch (NumberFormatException e) {
                                                             System.out.println("Invalid input. Please enter a valid price.");
-                                                            System.out.println("*".repeat(40));
                                                             continue;
                                                         }
                                                         try {
-                                                            stub.updateFoodItemPrice(foodID, newFoodPrice, "FoodItems");
+                                                            stub.updateFoodItemPrice(foodID, newFoodPrice);
                                                             System.out.println("Food item price updated successfully.");
-                                                            System.out.println("*".repeat(40));
                                                         } catch (RemoteException e) {
                                                             System.out.println("Error updating food item price: " + e.getMessage());
                                                         }
@@ -365,139 +310,31 @@ public class Client {
                                                 }
                                             }
                                             break;
-                                                case 2:
-                                                    while (true) {
-                                                        Map<String, ?> categories1 = stub.viewFoodData("DrinkItems");
-                                                        if (categories1.isEmpty()) {
-                                                            System.out.println("No drink items found.");
-                                                        } else {
-                                                            System.out.println("Drink Items:");
-                                                            for (Map.Entry<String, ?> entry : categories1.entrySet()) {
-                                                                System.out.println(entry.getKey() + ": " + entry.getValue().toString());
-                                                            }
-                                                        }
-                                                        System.out.println("Enter drink item ID to modify or enter -1 to exit:");
-                                                        String foodID = scanner.nextLine().trim();
-                                                        if (foodID.equals("-1")) break;
-                                                        if (categories1.containsKey(foodID)) {
-                                                            System.out.println("Do you want to change drink item name or drink item price? \n1. Food Item Name \n2. Food Item Price \n3. Back");
-                                                            int answer2;
-                                                            try {
-                                                                answer2 = Integer.parseInt(scanner.nextLine());
-                                                            } catch (NumberFormatException e) {
-                                                                System.out.println("Invalid input. Please enter a number.");
-                                                                continue;
-                                                            }
 
-                                                            if (answer2 == 1) {
-                                                                System.out.println("Enter new drink item name:");
-                                                                String newFoodName = scanner.nextLine().trim();
-                                                                try {
-                                                                    stub.updateFoodItemName(foodID, newFoodName, "DrinkItems");
-                                                                    System.out.println("Drink item name updated successfully.");
-                                                                    System.out.println("*".repeat(40));
-                                                                } catch (RemoteException e) {
-                                                                    System.out.println("Error updating drink item name: " + e.getMessage());
-                                                                }
-                                                            } else if (answer2 == 2) {
-                                                                System.out.println("Enter new drink item price:");
-                                                                double newFoodPrice;
-                                                                try {
-                                                                    newFoodPrice = Double.parseDouble(scanner.nextLine());
-                                                                } catch (NumberFormatException e) {
-                                                                    System.out.println("Invalid input. Please enter a valid price.");
-                                                                    System.out.println("*".repeat(40));
-                                                                    continue;
-                                                                }
-                                                                try {
-                                                                    stub.updateFoodItemPrice(foodID, newFoodPrice, "DrinkItems");
-                                                                    System.out.println("Drink item price updated successfully.");
-                                                                    System.out.println("*".repeat(40));
-                                                                } catch (RemoteException e) {
-                                                                    System.out.println("Error updating food item price: " + e.getMessage());
-                                                                }
-                                                            } else if (answer2 == 3) {
-                                                                break;
-                                                            } else {
-                                                                System.out.println("Please choose from the menu number.");
-                                                            }
-                                                        } else {
-                                                            System.out.println("Food item ID not found. Please try again.");
-                                                        }
-                                                    }
-                                                    break;
-                                                default:
-                                                    break;
-                                            }
-                                            break;
                                         case 4:
-                                            System.out.println("Do you want to delete food items or drink items?");
-                                            System.out.println("1. Food Items \n2. Drink Items");
-                                            int choice2;
-                                            try {
-                                                choice2 = Integer.parseInt(scanner.nextLine());
-                                            } catch (NumberFormatException e) {
-                                                System.out.println("Invalid input. Please enter a number.");
-                                                continue;
-                                            }
-                                            if (choice2==-1) break;
-                                            switch (choice2){
-                                                case 1:
-                                                    while (true) {
-                                                        Map<String, ?> categories1 = stub.viewFoodData("FoodItems");
-                                                        if (categories1.isEmpty()) {
-                                                            System.out.println("*".repeat(40));
-                                                            System.out.println("No food item found.");
-                                                            System.out.println("*".repeat(40));
-                                                        } else {
-                                                            System.out.println("Food Items:");
-                                                            for (Map.Entry<String, ?> entry : categories1.entrySet()) {
-                                                                System.out.println(entry.getKey() + ": " + entry.getValue().toString());
-                                                            }
-                                                        }
-                                                        System.out.println("Admin delete food items \nEnter food item ID to delete or enter -1 to exit:");
-                                                        String foodID = scanner.nextLine().trim();
-                                                        if (foodID.equals("-1")) break;
-                                                        if (foodID.isEmpty()) {
-                                                            System.out.println("Invalid input. Please enter food item ID from the list.");
-                                                            continue;
-                                                        }
-                                                        if (categories1.containsKey(foodID)) {
-                                                            stub.delete(foodID, "item");
-                                                        } else {
-                                                            System.out.println("Food item ID not found.");
-                                                        }
+                                            while (true) {
+                                                Map<String, ?> categories1 = stub.viewFoodData("FoodItems");
+                                                if (categories1.isEmpty()) {
+                                                    System.out.println("No food item found.");
+                                                } else {
+                                                    System.out.println("Food Items:");
+                                                    for (Map.Entry<String, ?> entry : categories1.entrySet()) {
+                                                        System.out.println(entry.getKey() + ": " + entry.getValue().toString());
                                                     }
-                                                    break;
-                                                case 2:
-                                                    while (true) {
-                                                        Map<String, ?> categories1 = stub.viewFoodData("DrinkItems");
-                                                        if (categories1.isEmpty()) {
-                                                            System.out.println("No drink item found.");
-                                                        } else {
-                                                            System.out.println("Drink Items:");
-                                                            for (Map.Entry<String, ?> entry : categories1.entrySet()) {
-                                                                System.out.println(entry.getKey() + ": " + entry.getValue().toString());
-                                                            }
-                                                        }
-                                                        System.out.println("Admin delete drink items \nEnter drink item ID to delete or enter -1 to exit:");
-                                                        String foodID = scanner.nextLine().trim();
-                                                        if (foodID.equals("-1")) break;
-                                                        if (foodID.isEmpty()) {
-                                                            System.out.println("Invalid input. Please enter food item ID from the list.");
-                                                            continue;
-                                                        }
-                                                        if (categories1.containsKey(foodID)) {
-                                                            stub.delete(foodID, "drink");
-                                                        } else {
-                                                            System.out.println("Drink item ID not found.");
-                                                        }
-                                                    }
-                                                    break;
-                                                default:
-                                                    break;
+                                                }
+                                                System.out.println("Admin delete food items \nEnter food item ID to delete or enter -1 to exit:");
+                                                String foodID = scanner.nextLine().trim();
+                                                if (foodID.equals("-1")) break;
+                                                if (foodID.isEmpty()) {
+                                                    System.out.println("Invalid input. Please enter food item ID from the list.");
+                                                    continue;
+                                                }
+                                                if (categories1.containsKey(foodID)) {
+                                                    stub.delete(foodID, "item");
+                                                } else {
+                                                    System.out.println("Food item ID not found.");
+                                                }
                                             }
-
                                         case 5:
                                             break;
                                         default:
@@ -506,15 +343,13 @@ public class Client {
                                     }
                                 } else if (answer ==3){
                                     while (true) {
-                                    System.out.println("McGee Restaurant Food Orders");
-                                    Map<String, ?> categories1 = stub.viewFoodData("FoodOrder");
-                                    if (categories1.isEmpty()) {
-                                        System.out.println("*".repeat(40));
-                                        System.out.println("No food order found.");
-                                        System.out.println("*".repeat(40));
-                                        System.out.println("*".repeat(40));
-                                        break;
-                                    } else {
+                                        System.out.println("McGee Restaurant Food Orders");
+                                        Map<String, ?> categories1 = stub.viewFoodData("FoodOrder");
+                                        if (categories1.isEmpty()) {
+                                            System.out.println("No food order found.");
+                                            System.out.println("*".repeat(40));
+                                            break;
+                                        } else {
                                             boolean hasPendingOrders = false;
                                             System.out.println("Food Orders:");
                                             for (Map.Entry<String, ?> entry : categories1.entrySet()) {
@@ -534,7 +369,6 @@ public class Client {
                                             if (!foodOrderID.isEmpty() && categories1.containsKey(foodOrderID)) {
                                                 stub.updateOrderStatus(foodOrderID, "Completed");
                                                 System.out.println("Order status updated to Completed.");
-                                                System.out.println("*".repeat(40));
                                             } else {
                                                 System.out.println("Please enter a valid food order ID.");
                                             }
@@ -554,7 +388,9 @@ public class Client {
                         System.out.println("1. Food Menu");
                         System.out.println("2. Shopping Cart");
                         System.out.println("3. Food Order");
-                        System.out.println("4. Exit");
+                        System.out.println("4. Check Balance");
+                        System.out.println("5. Add Balance");
+                        System.out.println("6. Exit");
                         System.out.println("Enter number of action to perform:");
 
                         int actionNum = 0;
@@ -565,10 +401,10 @@ public class Client {
                             continue;
                         }
 
-                        if (actionNum==4) {
+                        if (actionNum==6) {
                             break;
-                        } else if (actionNum < 1 || actionNum > 4) {
-                            System.out.println("Invalid action number. Please choose from 1 to 4.");
+                        } else if (actionNum < 1 || actionNum > 6) {
+                            System.out.println("Invalid action number. Please choose from 1 to 6.");
                             continue;
                         }
 
@@ -583,7 +419,6 @@ public class Client {
                                     Map<String, ?> foodCategoriesMap = stub.viewFoodData("FoodCategory");
 
                                     if (foodItemsMap.isEmpty()) {
-                                        System.out.println("*".repeat(40));
                                         System.out.println("No food items found.");
                                         System.out.println("*".repeat(40));
                                         break;
@@ -617,8 +452,7 @@ public class Client {
                                         System.out.println("Invalid quantity. Please enter a valid number.");
                                         continue;
                                     }
-                                    System.out.println("Food items selected successfully..");
-                                    System.out.println("*".repeat(40));
+
                                     price = selectedItem.getFoodPrice() * foodQuantity;
                                     totalPrice += price;
                                     selectedItems.add(new Cart(null,"John Doe", selectedItem, foodQuantity, price));
@@ -665,95 +499,127 @@ public class Client {
                                     }
                                 }
                                 while (true) {
-                                    System.out.println("*".repeat(40));
-                                    System.out.println("1. Order \n2.Exit");
+                                    System.out.println("Food Ordering");
+                                    System.out.print("1. Order \n2. Remove items from shopping cart \n3.Exit \n");
                                     int choice = 0;
                                     try {
                                         choice = Integer.parseInt(scanner.nextLine());
                                     } catch (NumberFormatException e) {
                                         System.out.println("Please enter number to choose");
                                     }
-                                    if(choice==2) break;
-                                    if(choice==1 || choice ==2) {
-                                        while (true) {
-                                            if (cartItems.isEmpty()) {
-                                                System.out.println("No items found in the shopping cart.");
-                                                System.out.println("*".repeat(40));
-                                                break;
-                                            } else {
-                                                System.out.println("Shopping Cart:");
-                                                int i = 0;
-                                                List<String> cartIDs = new ArrayList<>();
-                                                for (Map.Entry<String, ?> entry : cartItems.entrySet()) {
-                                                    Cart cartItem = (Cart) entry.getValue();
-                                                    if (cartItem.getCustomerName().equals("John Doe")) {
-                                                        i++;
-                                                        cartIDs.add(entry.getKey());
-                                                        System.out.println(i + ": " + cartItem.getFoodItem() + " X " + cartItem.getQuantity() + " Price:" + cartItem.getPrice());
+                                    if(choice==3) break;
+                                    switch (choice){
+                                        case 1:
+                                            while (true) {
+                                                if (cartItems.isEmpty()) {
+                                                    System.out.println("No items found in the shopping cart.");
+                                                    System.out.println("*".repeat(40));
+                                                    break;
+                                                } else {
+                                                    System.out.println("Shopping Cart:");
+                                                    int i = 0;
+                                                    List<String> cartIDs = new ArrayList<>();
+                                                    double totalOrderPrice = 0;
+                                                    for (Map.Entry<String, ?> entry : cartItems.entrySet()) {
+                                                        Cart cartItem = (Cart) entry.getValue();
+                                                        if (cartItem.getCustomerName().equals("John Doe")) {
+                                                            i++;
+                                                            cartIDs.add(entry.getKey());
+                                                            totalOrderPrice += cartItem.getPrice();
+                                                            System.out.println(i + ": " + cartItem.getFoodItem() + " X " + cartItem.getQuantity() + " Price:" + cartItem.getPrice());
+                                                        }
                                                     }
-                                                }
 
-                                                System.out.println("Enter cart number to choose or enter -1 to exit:");
-                                                int cartNumber = 0;
-                                                try {
-                                                    cartNumber = Integer.parseInt(scanner.nextLine());
-                                                    if (cartNumber == -1) {
-                                                        break;
+                                                    if (totalOrderPrice == 0) {
+                                                        System.out.println("No items found in the shopping cart.");
+                                                        System.out.println("*".repeat(40));
+                                                        return;
                                                     }
-                                                } catch (NumberFormatException e) {
-                                                    System.out.println("Please enter a valid number to choose.");
-                                                    continue;
-                                                }
-                                                if (cartNumber >= 1 && cartNumber <= cartIDs.size()) {
-                                                    System.out.println("Please select your order type or -1 to exit. \n1 for dine in \n2 for pickup ");
-                                                    int orderType = 0;
+
+                                                    System.out.println("Total price for the order: " + totalOrderPrice);
+
+                                                    System.out.println("Enter cart number to choose or enter -1 to exit:");
+                                                    int cartNumber = 0;
                                                     try {
-                                                        orderType = Integer.parseInt(scanner.nextLine());
+                                                        cartNumber = Integer.parseInt(scanner.nextLine());
+                                                        if (cartNumber == -1) {
+                                                            break;
+                                                        }
                                                     } catch (NumberFormatException e) {
+                                                        System.out.println("Please enter a valid number to choose.");
+                                                        continue;
+                                                    }
+
+                                                    System.out.println("Please select your order type. Enter 1 for dine in, 2 for pickup, or -1 to exit");
+                                                    int orderType = 0;
+                                                    try{
+                                                        orderType = Integer.parseInt(scanner.nextLine());
+                                                    }catch (NumberFormatException e){
                                                         System.out.println("Please enter number to choose");
                                                     }
-                                                    if (orderType == -1) break;
+                                                    if(orderType==-1) break;
 
-                                                    String orderStatus = null;
-                                                    if (orderType == 1) {
-                                                        orderStatus = "Dine In";
-                                                    } else if (orderType == 2) {
-                                                        orderStatus = "Pick Up";
-                                                    } else {
+                                                    String orderStatus=null;
+                                                    if(orderType==1){
+                                                        orderStatus="Dine In";
+                                                    }else if(orderType==2){
+                                                        orderStatus="Pick Up";
+                                                    }else{
                                                         System.out.println("Please select 1 or 2 to order");
                                                         break;
                                                     }
 
-                                                    String selectedCartID = cartIDs.get(cartNumber - 1);
-                                                    Cart selectedCartItem = (Cart) cartItems.get(selectedCartID);
-                                                    if (selectedCartItem != null) {
-                                                        System.out.println("Selected Cart Item:");
-                                                        System.out.println("Food Item: " + selectedCartItem.getFoodItem() + " X " + selectedCartItem.getQuantity() + " Price: " + selectedCartItem.getPrice());
 
-                                                        System.out.println("Do you want to make order for this food item? Enter y or n");
-                                                        String answer1 = scanner.nextLine();
-                                                        if (answer1.equals("y")) {
-                                                            try {
-                                                                stub.createOrder("John Doe", selectedCartItem.getFoodItem().getFoodName(), selectedCartItem.getQuantity(), selectedCartItem.getPrice(), orderStatus, "Pending");
-                                                                cartItems.remove(selectedCartID);
-                                                                stub.updateCartData(cartItems);
-                                                                System.out.println("Order placed successfully!");
-                                                            } catch (RemoteException e) {
-                                                                System.err.println("Error creating order: " + e.getMessage());
+                                                    if (cartNumber >= 1 && cartNumber <= cartIDs.size()) {
+                                                        String selectedCartID = cartIDs.get(cartNumber - 1);
+                                                        Cart selectedCartItem = (Cart) cartItems.get(selectedCartID);
+                                                        if (selectedCartItem != null) {
+                                                            double orderPrice = selectedCartItem.getPrice();
+                                                            double currentBalance = stub.getBalance("John Doe");
+
+                                                            if (currentBalance < orderPrice) {
+                                                                System.out.println("Insufficient balance to place the order.");
+                                                                break;
                                                             }
-                                                        }else{
-                                                            System.out.println("Invalid choice. PLease try again.");
+
+                                                            System.out.println("Selected Cart Item:");
+                                                            System.out.println("Food Item: " + selectedCartItem.getFoodItem() + " X " + selectedCartItem.getQuantity() + " Price: " + selectedCartItem.getPrice());
+
+                                                            System.out.println("Do you want to place the order for this food item? Enter y or n");
+                                                            String answer1 = scanner.nextLine();
+                                                            if (answer1.equalsIgnoreCase("y")) {
+                                                                try {
+                                                                    stub.createOrder("John Doe", selectedCartItem.getFoodItem().getFoodName(), selectedCartItem.getQuantity(), selectedCartItem.getPrice(), orderStatus, "Pending");
+                                                                    stub.setBalance("John Doe", currentBalance - orderPrice);
+                                                                    cartItems.remove(selectedCartID);
+                                                                    stub.updateCartData(cartItems);
+                                                                    System.out.println("Order placed successfully!");
+                                                                    System.out.println("Updated Balance: " + (currentBalance - orderPrice));
+                                                                } catch (RemoteException e) {
+                                                                    System.err.println("Error creating order: " + e.getMessage());
+                                                                }
+                                                            }
+                                                        } else {
+                                                            System.out.println("Invalid cart ID selected.");
                                                         }
                                                     } else {
-                                                        System.out.println("Invalid cart ID selected.");
+                                                        System.out.println("Invalid cart number selected.");
                                                     }
-                                                } else {
-                                                    System.out.println("Invalid cart number selected.");
                                                 }
                                             }
-                                        }
-                                    }else{
-                                        System.out.println(("Please enter 1 or 2 to select."));
+                                            break;
+                                        case 2:
+                                            System.out.println("Enter cart ID to delete or enter -1 to exit:");
+                                            int cartID = 0;
+                                            try {
+                                                cartID = Integer.parseInt(scanner.nextLine());
+                                            }catch (NumberFormatException e){
+                                                System.out.println("Please enter number to choose");
+                                            }
+                                            if(cartID==-1)break;
+                                            break;
+                                        default:
+                                            System.out.println("Invalid choice");
                                     }
                                     System.out.println("*".repeat(40));
                                 }
@@ -763,7 +629,6 @@ public class Client {
                                 System.out.println("This is order that you have made in McGee Restaurant");
                                 Map<String, ? > categories1 = stub.viewFoodData("FoodOrder");
                                 if (categories1.isEmpty()) {
-                                    System.out.println("*".repeat(40));
                                     System.out.println("No food order found.");
                                     System.out.println("*".repeat(40));
                                     break;
@@ -776,6 +641,24 @@ public class Client {
                                 System.out.println("*".repeat(40));
                                 break;
                             case 4:
+                                double balance = stub.getBalance("John Doe");
+                                System.out.println("Current Balance: " + balance);
+                                break;
+                            case 5:
+                                System.out.println("Enter amount to add or -1 to exit:");
+                                double amount;
+                                try {
+                                    amount = Double.parseDouble(scanner.nextLine());
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Invalid amount. Please enter a valid number.");
+                                    return;
+                                }
+
+                                double currentBalance = stub.getBalance("John Doe");
+                                stub.setBalance("John Doe", currentBalance + amount);
+                                System.out.println("Balance updated successfully. New balance: " + (currentBalance + amount));
+                                break;
+                            case 6:
                                 break;
                             default:
                                 break;

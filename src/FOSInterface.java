@@ -21,5 +21,6 @@ public interface FOSInterface extends Remote {
     void setBalance(String customerName, double balance) throws RemoteException;
     double getBalance(String customerName) throws RemoteException;
     void withdrawBalance(String customerName, double amount) throws RemoteException;
-
+    void updateFoodItemName(String foodID, String newFoodName) throws RemoteException;
+    void updateFoodItemPrice(String foodID, double newFoodPrice) throws RemoteException;
 }

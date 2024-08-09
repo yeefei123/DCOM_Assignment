@@ -66,6 +66,43 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
     }
 
     @Override
+    public void updateFoodItemName(String foodID, String newFoodName) throws RemoteException {
+        if (foodItems.containsKey(foodID)) {
+            FoodItems foodItem = foodItems.get(foodID);
+            foodItem.setFoodName(newFoodName);
+            foodItems.put(foodID, foodItem);
+            System.out.println("Food item name updated successfully.");
+            writeToFile(FOOD_ITEM_FILE, foodItems);
+        } else {
+            System.out.println("Food item ID not found. Please try again.");
+        }
+    }
+
+    @Override
+
+    public void updateFoodItemPrice(String foodID, double newFoodPrice) throws RemoteException {
+
+        if (foodItems.containsKey(foodID)) {
+
+            FoodItems foodItem = foodItems.get(foodID);
+
+            foodItem.setFoodPrice(newFoodPrice);
+
+            foodItems.put(foodID, foodItem);
+
+            System.out.println("Food item price updated successfully.");
+
+            writeToFile(FOOD_ITEM_FILE, foodItems);
+
+        } else {
+
+            System.out.println("Food item ID not found. Please try again.");
+
+        }
+
+    }
+
+    @Override
     public String placeOrder(String customerName, String item, int quantity, double price, String orderType, String status) throws RemoteException {
         withdrawBalance(customerName, price * quantity); // Deduct balance here
         int orderId = orderIdCounter++;
@@ -315,7 +352,7 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
             writeToFile(BALANCES_FILE, balances);
             System.out.println("Balance updated for " + customerName + ": " + (currentBalance - amount));
         } else {
-            throw new RemoteException("Insufficient balance.");
+            System.out.println("Insufficient balance.");
         }
     }
 }
