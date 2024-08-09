@@ -81,6 +81,6 @@ public class Order implements Serializable {
     @Override
     public String toString() {
         return "Order ID: " + orderId + ", Customer: " + customerName + ", Item: " + item +
-                ", Quantity: " + quantity + ", Price: " + price + ", Status: " + status;
+                ", Quantity: " + quantity + ", Total Price: " + price + ", Order Type:" +orderType +  ", Status: " + status;
     }
 }
