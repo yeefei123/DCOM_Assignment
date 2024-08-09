@@ -390,7 +390,9 @@ public class Client {
                         System.out.println("1. Food Menu");
                         System.out.println("2. Shopping Cart");
                         System.out.println("3. Food Order");
-                        System.out.println("4. Exit");
+                        System.out.println("4. Check Balance");
+                        System.out.println("5. Add Balance");
+                        System.out.println("6. Exit");
                         System.out.println("Enter number of action to perform:");
 
                         int actionNum = 0;
@@ -401,10 +403,10 @@ public class Client {
                             continue;
                         }
 
-                        if (actionNum==4) {
+                        if (actionNum==6) {
                             break;
-                        } else if (actionNum < 1 || actionNum > 4) {
-                            System.out.println("Invalid action number. Please choose from 1 to 4.");
+                        } else if (actionNum < 1 || actionNum > 6) {
+                            System.out.println("Invalid action number. Please choose from 1 to 6.");
                             continue;
                         }
 
@@ -519,14 +521,24 @@ public class Client {
                                                 System.out.println("Shopping Cart:");
                                                 int i = 0;
                                                 List<String> cartIDs = new ArrayList<>();
+                                                double totalOrderPrice = 0;
                                                 for (Map.Entry<String, ?> entry : cartItems.entrySet()) {
                                                     Cart cartItem = (Cart) entry.getValue();
                                                     if (cartItem.getCustomerName().equals("John Doe")) {
                                                         i++;
                                                         cartIDs.add(entry.getKey());
+                                                        totalOrderPrice += cartItem.getPrice();
                                                         System.out.println(i + ": " + cartItem.getFoodItem() + " X " + cartItem.getQuantity() + " Price:" + cartItem.getPrice());
                                                     }
                                                 }
+
+                                                if (totalOrderPrice == 0) {
+                                                    System.out.println("No items found in the shopping cart.");
+                                                    System.out.println("*".repeat(40));
+                                                    return;
+                                                }
+
+                                                System.out.println("Total price for the order: " + totalOrderPrice);
 
                                                 System.out.println("Enter cart number to choose or enter -1 to exit:");
                                                 int cartNumber = 0;
@@ -559,21 +571,32 @@ public class Client {
                                                     break;
                                                 }
 
+
                                                 if (cartNumber >= 1 && cartNumber <= cartIDs.size()) {
                                                     String selectedCartID = cartIDs.get(cartNumber - 1);
                                                     Cart selectedCartItem = (Cart) cartItems.get(selectedCartID);
                                                     if (selectedCartItem != null) {
+                                                        double orderPrice = selectedCartItem.getPrice();
+                                                        double currentBalance = stub.getBalance("John Doe");
+
+                                                        if (currentBalance < orderPrice) {
+                                                            System.out.println("Insufficient balance to place the order.");
+                                                            return;
+                                                        }
+
                                                         System.out.println("Selected Cart Item:");
                                                         System.out.println("Food Item: " + selectedCartItem.getFoodItem() + " X " + selectedCartItem.getQuantity() + " Price: " + selectedCartItem.getPrice());
 
-                                                        System.out.println("Do you want to make order for this food item? Enter y or n");
+                                                        System.out.println("Do you want to place the order for this food item? Enter y or n");
                                                         String answer1 = scanner.nextLine();
-                                                        if (answer1.equals("y")) {
+                                                        if (answer1.equalsIgnoreCase("y")) {
                                                             try {
                                                                 stub.createOrder("John Doe", selectedCartItem.getFoodItem().getFoodName(), selectedCartItem.getQuantity(), selectedCartItem.getPrice(), orderStatus, "Pending");
+                                                                stub.setBalance("John Doe", currentBalance - orderPrice); // Deduct balance
                                                                 cartItems.remove(selectedCartID);
                                                                 stub.updateCartData(cartItems);
                                                                 System.out.println("Order placed successfully!");
+                                                                System.out.println("Updated Balance: " + (currentBalance - orderPrice));
                                                             } catch (RemoteException e) {
                                                                 System.err.println("Error creating order: " + e.getMessage());
                                                             }
@@ -585,7 +608,6 @@ public class Client {
                                                     System.out.println("Invalid cart number selected.");
                                                 }
                                             }
-
                                         }
                                         break;
                                         case 2:
@@ -621,6 +643,22 @@ public class Client {
                                 System.out.println("*".repeat(40));
                                 break;
                             case 4:
+                                double balance = stub.getBalance("John Doe");
+                                System.out.println("Current Balance: " + balance);
+                            case 5:
+                                System.out.println("Enter amount to add:");
+                                double amount;
+                                try {
+                                    amount = Double.parseDouble(scanner.nextLine());
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Invalid amount. Please enter a valid number.");
+                                    return;
+                                }
+
+                                double currentBalance = stub.getBalance("John Doe");
+                                stub.setBalance("John Doe", currentBalance + amount);
+                                System.out.println("Balance updated successfully. New balance: " + (currentBalance + amount));
+                            case 6:
                                 break;
                             default:
                                 System.out.println("Invalid choice");

@@ -10,6 +10,7 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
     private Map<String, FoodCategory> foodCategories;
     private Map<String, FoodItems> foodItems;
     private Map<String, Cart> shoppingCart;
+    private Map<String, Double> balances;
 
     int foodCategoriesCount;
     private int orderIdCounter;
@@ -17,6 +18,7 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
     private static final String FOOD_ITEM_FILE = "food_menu.ser";
     private static final String CART_FILE = "food_cart.ser";
     private static final String ORDERS_FILE = "orders.ser";
+    private static final String BALANCES_FILE = "balances.ser";
 
     protected FOSInterfaceImpl() throws RemoteException {
         super();
@@ -24,6 +26,7 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
         foodCategories = (Map<String, FoodCategory>) readFromFile(FOOD_CATEGORIES_FILE);
         foodItems = (Map<String, FoodItems>) readFromFile(FOOD_ITEM_FILE);
         shoppingCart = (Map<String, Cart>) readFromFile(CART_FILE);
+        balances = (Map<String, Double>) readFromFile(BALANCES_FILE);
         orderIdCounter = 1;
     }
 
@@ -61,6 +64,7 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
 
     @Override
     public String placeOrder(String customerName, String item, int quantity, double price, String orderType, String status) throws RemoteException {
+        withdrawBalance(customerName, price * quantity); // Deduct balance here
         int orderId = orderIdCounter++;
         Order order = new Order(orderId, customerName, item, quantity, price, orderType, status);
         orders.put(String.valueOf(orderId), order);
@@ -245,8 +249,6 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
 
     }
 
-
-
     @Override
 
     public void updateFoodItemPrice(String foodID, double newFoodPrice) throws RemoteException {
@@ -269,5 +271,29 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
 
         }
 
+    }
+
+    @Override
+    public void setBalance(String customerName, double balance) throws RemoteException {
+        balances.put(customerName, balance);
+        writeToFile(BALANCES_FILE, balances);
+        System.out.println("Balance set for " + customerName + ": " + balance);
+    }
+
+    @Override
+    public double getBalance(String customerName) throws RemoteException {
+        return balances.getOrDefault(customerName, 0.0);
+    }
+
+    @Override
+    public void withdrawBalance(String customerName, double amount) throws RemoteException {
+        double currentBalance = getBalance(customerName);
+        if (currentBalance >= amount) {
+            balances.put(customerName, currentBalance - amount);
+            writeToFile(BALANCES_FILE, balances);
+            System.out.println("Balance updated for " + customerName + ": " + (currentBalance - amount));
+        } else {
+            throw new RemoteException("Insufficient balance.");
+        }
     }
 }
