@@ -31,7 +31,7 @@ public class Server {
             CustomRMIClientSocketFactory customClientSocketFactory = new CustomRMIClientSocketFactory(sslSocketFactory);
 
             // Create registry
-            Registry registry = LocateRegistry.createRegistry(1099, customClientSocketFactory, customServerSocketFactory);
+            Registry registry = LocateRegistry.createRegistry(1100, customClientSocketFactory, customServerSocketFactory);
 
             // Bind the remote object to the registry
             FOSInterfaceImpl obj = new FOSInterfaceImpl();
