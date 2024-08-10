@@ -9,12 +9,13 @@ import java.rmi.registry.Registry;
 import java.security.KeyStore;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class Client {
+    public static final String BOLD_RED = "\u001B[1;31m";
+    public static final String RESET = "\u001B[0m";
+    public static Scanner scanner = new Scanner(System.in);
+    public static FOSInterface stub = null;
     public static void main(String[] args) {
         try {
             // Load keystore for the client
@@ -42,11 +43,11 @@ public class Client {
             Registry registry = LocateRegistry.getRegistry("localhost", 1099, customClientSocketFactory);
 
             // Lookup the remote object
-            FOSInterface stub = (FOSInterface) registry.lookup("FOSInterface");
+            stub = (FOSInterface) registry.lookup("FOSInterface");
 
             while (true) {
                 System.out.println("Welcome to McGee restaurant \nSelect your role:\n1. Admin\n2. Customer \n3. Exit");
-                Scanner scanner = new Scanner(System.in);
+
                 int role;
                 try {
                     role = Integer.parseInt(scanner.nextLine());
@@ -504,7 +505,13 @@ public class Client {
                         }
                     }
                 } else if (role == 2) {
+                    boolean isUserExit;
                     while (true) {
+                        isUserExit = userMenu();
+                        if(isUserExit == true){
+                            break;
+                        }
+
                         System.out.println("Welcome to McGee Food Ordering System");
                         System.out.println("1. Food Menu");
                         System.out.println("2. Shopping Cart");
@@ -816,4 +823,121 @@ public class Client {
             e.printStackTrace();
         }
     }
+
+    public static boolean userMenu() {
+        boolean retry = true;
+        try {
+            do {
+                System.out.println("Welcome to McGee Food Ordering System");
+                System.out.println("1. Register");
+                System.out.println("2. Login");
+                System.out.println("3. Exit");
+
+                boolean userInputError = true;
+                int userInput = 0;
+                do {
+                    try {
+                        System.out.print("Enter your option: ");
+                        userInput = scanner.nextInt();
+                        if(userInput  < 1 || userInput > 3){
+                            throw new Exception("Invalid option selected. Please enter a number between 1 and 3.");
+                        }
+                        userInputError = false;
+                    }  catch (InputMismatchException e) {
+                        System.err.println(BOLD_RED + "Please only key in integer");
+                        scanner.nextLine();
+                        Thread.sleep(1000);
+                    } catch (Exception e) {
+                        System.err.println(e.getMessage());
+                        Thread.sleep(1000);
+                    }
+                } while (userInputError);
+
+
+                switch (userInput) {
+                    case 1:
+                        //request input
+                        String username;
+                        String password;
+                        String phoneNumber;
+                        String address;
+
+                        scanner.nextLine();
+                        System.out.print("Enter your username: ");
+                        username = scanner.nextLine();
+                        System.out.print("Enter your password: ");
+                        password = scanner.nextLine();
+                        System.out.print("Enter your phoneNumber: ");
+                        phoneNumber = scanner.nextLine();
+                        System.out.print("Enter your address: ");
+                        address = scanner.nextLine();
+
+                        boolean isDuplicate = stub.checkDuplicate(username);
+
+                        while (isDuplicate) {
+                            System.out.println(BOLD_RED + "The username you have chosen is already taken." + RESET);
+                            System.out.print("Enter your username: ");
+                            username = scanner.nextLine();
+                            isDuplicate = stub.checkDuplicate(username);
+                        }
+                        //false
+                        if (!isDuplicate) {
+                            stub.register(username, password, phoneNumber, address);
+                        }
+
+                        // redirect to login page or direct go to food page
+                        System.out.println("Register Successful. Press enter key to continue");
+                        scanner.nextLine();
+                        return false;
+
+                    case 2:
+                        String inputUsername;
+                        String inputPassword;
+                        int count = 3;
+                        scanner.nextLine();
+                        System.out.print("Enter your username: ");
+                        inputUsername = scanner.nextLine();
+                        System.out.print("Enter your password: ");
+                        inputPassword = scanner.nextLine();
+
+                        boolean isLoginSuccess = stub.login(inputUsername, inputPassword);
+
+                        while (!isLoginSuccess) {
+                            if (count < 1) {
+                                System.out.println("You have exceeded the maximum of 3 attempts. Press any key to continue.");
+                                break;
+                            } else {
+                                System.out.println(BOLD_RED + "Login failed. Please check your username and password.You only have " + count + " attempts left." + RESET);
+                                System.out.print("Enter your username: ");
+                                inputUsername = scanner.nextLine();
+                                System.out.print("Enter your password: ");
+                                inputPassword = scanner.nextLine();
+                                isLoginSuccess = stub.login(inputUsername, inputPassword);
+                                count--;
+                            }
+                        }
+
+                        if (isLoginSuccess) {
+                            retry = false;
+                            System.out.println("Login successful! Press Enter to continue.");
+                            scanner.nextLine();
+                            return false;
+                        } else {
+                            retry = true;
+                        }
+                        break;
+                    case 3:
+                        return true;
+                }
+            } while (retry);
+
+
+        } catch (Exception ex) {
+
+        }
+
+        return false;
+    }
+
+
 }

@@ -2,11 +2,13 @@ import java.io.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterface {
-
+    private Map<String,Customer> customers;
     private Map<String, Order> orders;
     private Map<String, FoodCategory> foodCategories;
     private Map<String, FoodItems> foodItems;
@@ -14,8 +16,11 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
     private Map<String, Cart> shoppingCart;
     private Map<String, Double> balances;
 
+    private Customer currentCustomer;
+
     int foodCategoriesCount;
     private int orderIdCounter;
+    private static final String CUSTOMER_FILE = "customer.ser";
     private static final String FOOD_CATEGORIES_FILE = "food_categories.ser";
     private static final String FOOD_ITEM_FILE = "food_menu.ser";
     private static final String DRINK_ITEM_FILE = "drink_menu.ser";
@@ -25,6 +30,7 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
 
     protected FOSInterfaceImpl() throws RemoteException {
         super();
+        customers = (Map<String,Customer>) readFromFile(CUSTOMER_FILE);
         orders = (Map<String, Order>) readFromFile(ORDERS_FILE);
         foodCategories = (Map<String, FoodCategory>) readFromFile(FOOD_CATEGORIES_FILE);
         drinkItems = (Map<String, DrinkItems>) readFromFile(DRINK_ITEM_FILE);
@@ -64,6 +70,47 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean checkDuplicate(String userName) throws RemoteException {
+        for (Map.Entry<String, Customer> entry : customers.entrySet()) {
+            String customerId = entry.getKey();
+            Customer customer = entry.getValue();
+
+            if(Objects.equals(userName.toLowerCase(), customer.getUsername().toLowerCase())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void register(String username, String password, String phoneNumber, String address) throws RemoteException {
+        // Read the existing food items from the file
+        customers = (Map<String, Customer>) readFromFile(CUSTOMER_FILE);
+        Customer newCustomer = new Customer(username,password,phoneNumber,address);
+        customers.put(newCustomer.getCustomerId(), newCustomer);
+        writeToFile(CUSTOMER_FILE, customers);
+    }
+
+    @Override
+    public boolean login(String userName, String password) throws RemoteException {
+        for (Map.Entry<String, Customer> entry : customers.entrySet()) {
+            String customerId = entry.getKey();
+            Customer customer = entry.getValue();
+            if(Objects.equals(userName.toLowerCase(), customer.getUsername().toLowerCase()) && Objects.equals(password,customer.getPassword())){
+                currentCustomer = customer;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public Customer getCurrentLoginCustomer() throws RemoteException {
+        return currentCustomer;
     }
 
     @Override
