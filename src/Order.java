@@ -1,5 +1,6 @@
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 public class Order implements Serializable {
     @Serial
@@ -11,8 +12,10 @@ public class Order implements Serializable {
     private double price;
     private String orderType;
     private String status;
+    private LocalDateTime orderTime;
+    private double totalPrice;
 
-    public Order(int orderId, String customerName, String item, int quantity, double price, String orderType, String status) {
+    public Order(int orderId, String customerName, String item, int quantity, double price, String orderType, String status, LocalDateTime orderTime) {
         this.orderId = orderId;
         this.customerName = customerName;
         this.item = item;
@@ -20,6 +23,8 @@ public class Order implements Serializable {
         this.price = price;
         this.orderType = orderType;
         this.status = status;
+        this.orderTime = orderTime;
+        this.totalPrice = calculateTotalPrice();
     }
 
     public int getOrderId() {
@@ -78,9 +83,26 @@ public class Order implements Serializable {
         this.orderType = orderType;
     }
 
+    public LocalDateTime getOrderTime() {
+        return orderTime;
+    }
+
+    public void setOrderTime(LocalDateTime orderTime) {
+        this.orderTime = orderTime;
+    }
+
+    private double calculateTotalPrice() {
+        return this.price * this.quantity;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
     @Override
     public String toString() {
         return "Order ID: " + orderId + ", Customer: " + customerName + ", Item: " + item +
-                ", Quantity: " + quantity + ", Total Price: " + price + ", Order Type:" +orderType +  ", Status: " + status;
+                ", Quantity: " + quantity + ", Total Price: " + price + ", Order Type:" + orderType +
+                ", Status: " + status + ", Order Time: " + orderTime + ", Total Price: " + totalPrice;
     }
 }

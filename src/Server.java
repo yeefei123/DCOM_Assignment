@@ -9,7 +9,7 @@ public class Server {
         try {
             // Load keystore
             KeyStore keyStore = KeyStore.getInstance("PKCS12");
-            keyStore.load(new FileInputStream("C:\\Users\\yeefei\\IdeaProjects\\DCOM_Assignment\\rmi-server.p12"), "password".toCharArray());
+            keyStore.load(new FileInputStream("C:\\Users\\ASUS\\IdeaProjects\\DCOM_Assignment\\rmi-server.p12"), "password".toCharArray());
 
             // Set up key and trust managers
             KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());

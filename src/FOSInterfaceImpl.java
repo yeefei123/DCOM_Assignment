@@ -1,6 +1,7 @@
 import java.io.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -81,36 +82,28 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
     @Override
 
     public void updateFoodItemPrice(String foodID, double newFoodPrice) throws RemoteException {
-
         if (foodItems.containsKey(foodID)) {
-
             FoodItems foodItem = foodItems.get(foodID);
-
             foodItem.setFoodPrice(newFoodPrice);
-
             foodItems.put(foodID, foodItem);
-
             System.out.println("Food item price updated successfully.");
-
             writeToFile(FOOD_ITEM_FILE, foodItems);
-
         } else {
-
             System.out.println("Food item ID not found. Please try again.");
-
         }
-
     }
 
     @Override
     public String placeOrder(String customerName, String item, int quantity, double price, String orderType, String status) throws RemoteException {
         withdrawBalance(customerName, price * quantity); // Deduct balance here
         int orderId = orderIdCounter++;
-        Order order = new Order(orderId, customerName, item, quantity, price, orderType, status);
+        LocalDateTime orderTime = LocalDateTime.now();
+        Order order = new Order(orderId, customerName, item, quantity, price, orderType, status, orderTime);
         orders.put(String.valueOf(orderId), order);
         saveOrders();
         return "Order placed successfully! " + order.toString();
     }
+
 
     private void saveOrders() {
         writeToFile(ORDERS_FILE, orders);
@@ -171,9 +164,9 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
         }
 
         int orderID = orders.size() + 1;
-        System.out.println(orderID);
-        Order newItem = new Order(orderID, customerName, item, quantity, price, orderType, status);
-        orders.put(String.valueOf(orderID), newItem);
+        LocalDateTime now = LocalDateTime.now();  // Current date and time
+        Order newOrder = new Order(orderID, customerName, item, quantity, price, orderType, status, now);
+        orders.put(String.valueOf(orderID), newOrder);
         writeToFile(ORDERS_FILE, orders);
     }
 
@@ -306,7 +299,6 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
     }
 
     @Override
-
     public void updateFoodItemPrice(String foodID, double newFoodPrice, String type) throws RemoteException {
         if(type.equals("FoodItems")) {
             if (foodItems.containsKey(foodID)) {

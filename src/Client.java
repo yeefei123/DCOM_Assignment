@@ -7,6 +7,8 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.security.KeyStore;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +19,7 @@ public class Client {
         try {
             // Load keystore for the client
             KeyStore keyStore = KeyStore.getInstance("PKCS12");
-            keyStore.load(new FileInputStream("C:\\Users\\yeefei\\IdeaProjects\\DCOM_Assignment\\rmi-client.p12"), "password".toCharArray());
+            keyStore.load(new FileInputStream("C:\\Users\\ASUS\\IdeaProjects\\DCOM_Assignment\\rmi-client.p12"), "password".toCharArray());
 
             // Set up key and trust managers
             KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
@@ -60,7 +62,7 @@ public class Client {
                         if (password.equals("-1")) break;
                         if (password.equals("1234")) {
                             while (true) {
-                                System.out.println("Admin Edit Food Menu \n1. Food Category \n2. Food Items \n3. View food order \n4. Exit");
+                                System.out.println("Admin Menu \n1. Food Category \n2. Food Items \n3. View Food Order \n4. View Total Sales \n5. Exit");
                                 int answer;
                                 try {
                                     answer = Integer.parseInt(scanner.nextLine());
@@ -375,6 +377,89 @@ public class Client {
                                         }
                                     }
                                 }else if (answer==4){
+                                    System.out.println("1. View total sales per day");
+                                    System.out.println("2. View total sales per week");
+                                    System.out.println("3. View total sales per month");
+
+                                    int salesChoice;
+                                    try {
+                                        salesChoice = Integer.parseInt(scanner.nextLine());
+                                    } catch (NumberFormatException e) {
+                                        System.out.println("Invalid input. Please enter a number.");
+                                        return;
+                                    }
+
+                                    switch (salesChoice) {
+                                        case 1:
+                                            System.out.print("Enter date (YYYY-MM-DD) to view sales: ");
+                                            String dateInput = scanner.nextLine();
+                                            LocalDate date = LocalDate.parse(dateInput);
+                                            double dailySales = 0.0;
+                                            try {
+                                                Map<String, ?> orders = stub.viewFoodData("FoodOrder");
+                                                for (Map.Entry<String, ?> entry : orders.entrySet()) {
+                                                    Order order = (Order) entry.getValue();
+                                                    LocalDateTime orderTime = order.getOrderTime();
+                                                    if (orderTime != null && orderTime.toLocalDate().equals(date)) {
+                                                        dailySales += order.getTotalPrice();
+                                                    }
+                                                }
+                                            } catch (RemoteException e) {
+                                                System.out.println("Error retrieving sales data: " + e.getMessage());
+                                                return;
+                                            }
+                                            System.out.println("Total sales for " + date + ": " + dailySales);
+                                            break;
+
+                                        case 2:
+                                            System.out.print("Enter date (YYYY-MM-DD) to view sales for the week: ");
+                                            String weekDateInput = scanner.nextLine();
+                                            LocalDate weekDate = LocalDate.parse(weekDateInput);
+                                            double weeklySales = 0.0;
+                                            try {
+                                                Map<String, ?> orders = stub.viewFoodData("FoodOrder");
+                                                for (Map.Entry<String, ?> entry : orders.entrySet()) {
+                                                    Order order = (Order) entry.getValue();
+                                                    LocalDateTime orderTime = order.getOrderTime();
+                                                    if (orderTime != null && orderTime.toLocalDate().isAfter(weekDate.minusDays(1)) &&
+                                                            orderTime.toLocalDate().isBefore(weekDate.plusDays(7))) {
+                                                        weeklySales += order.getTotalPrice();
+                                                    }
+                                                }
+                                            } catch (RemoteException e) {
+                                                System.out.println("Error retrieving sales data: " + e.getMessage());
+                                                return;
+                                            }
+                                            System.out.println("Total sales for the week starting " + weekDate + ": " + weeklySales);
+                                            break;
+
+                                        case 3:
+                                            System.out.print("Enter year and month (YYYY-MM) to view sales for the month: ");
+                                            String monthInput = scanner.nextLine();
+                                            LocalDate monthDate = LocalDate.parse(monthInput + "-01");
+                                            double monthlySales = 0.0;
+                                            try {
+                                                Map<String, ?> orders = stub.viewFoodData("FoodOrder");
+                                                for (Map.Entry<String, ?> entry : orders.entrySet()) {
+                                                    Order order = (Order) entry.getValue();
+                                                    LocalDateTime orderTime = order.getOrderTime();
+                                                    if (orderTime != null && orderTime.getMonth().equals(monthDate.getMonth()) &&
+                                                            orderTime.getYear() == monthDate.getYear()) {
+                                                        monthlySales += order.getTotalPrice();
+                                                    }
+                                                }
+                                            } catch (RemoteException e) {
+                                                System.out.println("Error retrieving sales data: " + e.getMessage());
+                                                return;
+                                            }
+                                            System.out.println("Total sales for " + monthDate.getMonth() + " " + monthDate.getYear() + ": " + monthlySales);
+                                            break;
+
+                                        default:
+                                            System.out.println("Invalid choice. Please try again.");
+                                            break;
+                                    }
+                                }else if (answer==5){
                                     break;
                                 }
                             }
