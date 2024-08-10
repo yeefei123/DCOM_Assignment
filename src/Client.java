@@ -57,12 +57,14 @@ public class Client {
 
                 if (role == 1) {
                     while (true) {
+                        System.out.println("Admin Login");
                         System.out.println("Enter admin password or enter -1 to exit:");
                         String password = scanner.nextLine();
                         if (password.equals("-1")) break;
                         if (password.equals("1234")) {
                             while (true) {
                                 System.out.println("Admin Menu \n1. Food Category \n2. Food Items \n3. View Food Order \n4. View Total Sales \n5. Exit");
+                                System.out.println("Enter number to choose or -1 to exit");
                                 int answer;
                                 try {
                                     answer = Integer.parseInt(scanner.nextLine());
@@ -73,7 +75,13 @@ public class Client {
                                 if (answer == 1) {
                                     while (true) {
                                         System.out.println("Admin Edit Food Category:\n1. View Food Category\n2. Create Food Categories\n3. Update Food Categories \n4. Delete Food Categories \n5. Exit");
-                                        int choice;
+                                        System.out.println("Enter menu number to choose or -1 to exit:");
+                                        int choice=0;
+                                        if(choice==-1) break;
+                                        if(choice>5 || choice<1){
+                                            System.out.println("Invalid choice. Please choose from the menu");
+                                            break;
+                                        }
                                         try {
                                             choice = Integer.parseInt(scanner.nextLine());
                                         } catch (NumberFormatException e) {
@@ -377,88 +385,116 @@ public class Client {
                                         }
                                     }
                                 }else if (answer==4){
-                                    System.out.println("1. View total sales per day");
-                                    System.out.println("2. View total sales per week");
-                                    System.out.println("3. View total sales per month");
+                                    while (true) {
+                                        System.out.println("1. View total sales per day");
+                                        System.out.println("2. View total sales per week");
+                                        System.out.println("3. View total sales per month");
+                                        System.out.println("Enter number to choose or -1 to exit");
 
-                                    int salesChoice;
-                                    try {
-                                        salesChoice = Integer.parseInt(scanner.nextLine());
-                                    } catch (NumberFormatException e) {
-                                        System.out.println("Invalid input. Please enter a number.");
-                                        return;
+                                        int salesChoice = 0;
+
+
+                                        try {
+                                            salesChoice = Integer.parseInt(scanner.nextLine());
+                                            if (salesChoice == -1) break;
+                                            if (salesChoice > 3 || salesChoice < 1) {
+                                                System.out.println("Invalid choice. Please choose from menu");
+                                                break;
+                                            }
+                                        } catch (NumberFormatException e) {
+                                            System.out.println("Invalid input. Please enter a number.");
+                                        }
+
+                                        switch (salesChoice) {
+                                            case 1:
+                                                while(true) {
+                                                    try {
+                                                        System.out.print("Enter date (YYYY-MM-DD) to view sales: ");
+                                                        String dateInput = scanner.nextLine();
+                                                        if (dateInput.equals("-1")) break;
+                                                        LocalDate date = LocalDate.parse(dateInput);
+                                                        double dailySales = 0.0;
+                                                        try {
+                                                            Map<String, ?> orders = stub.viewFoodData("FoodOrder");
+                                                            for (Map.Entry<String, ?> entry : orders.entrySet()) {
+                                                                Order order = (Order) entry.getValue();
+                                                                LocalDateTime orderTime = order.getOrderTime();
+                                                                if (orderTime != null && orderTime.toLocalDate().equals(date)) {
+                                                                    dailySales += order.getPrice();
+                                                                }
+                                                            }
+                                                        } catch (RemoteException e) {
+                                                            System.out.println("Error retrieving sales data: " + e.getMessage());
+                                                        }
+                                                        System.out.println("Total sales for " + date + ": " + dailySales);
+                                                        break;
+                                                    }catch (Exception ex){
+                                                        System.out.println("Incorrect date format. Please enter the date in 'YYYY-MM-DD' format.");
+                                                        break;
+                                                    }
+                                                }
+                                                break;
+                                            case 2:
+                                                while (true) {
+                                                    try {
+                                                        System.out.print("Enter date (YYYY-MM-DD) to view sales for the week: ");
+                                                        String weekDateInput = scanner.nextLine();
+                                                        if (weekDateInput.equals("-1")) break;
+                                                        LocalDate weekDate = LocalDate.parse(weekDateInput);
+                                                        double weeklySales = 0.0;
+                                                        try {
+                                                            Map<String, ?> orders = stub.viewFoodData("FoodOrder");
+                                                            for (Map.Entry<String, ?> entry : orders.entrySet()) {
+                                                                Order order = (Order) entry.getValue();
+                                                                LocalDateTime orderTime = order.getOrderTime();
+                                                                if (orderTime != null && orderTime.toLocalDate().isAfter(weekDate.minusDays(1)) &&
+                                                                        orderTime.toLocalDate().isBefore(weekDate.plusDays(7))) {
+                                                                    weeklySales += order.getPrice();
+                                                                }
+                                                            }
+                                                        } catch (RemoteException e) {
+                                                            System.out.println("Error retrieving sales data: " + e.getMessage());
+                                                        }
+                                                        System.out.println("Total sales for the week starting " + weekDate + ": " + weeklySales);
+                                                        break;
+                                                    }catch (Exception ex){
+                                                        System.out.println("Incorrect date format. Please enter the date in 'YYYY-MM-DD' format.");
+                                                        break;
+                                                    }
+                                                }
+                                                break;
+                                            case 3:
+                                                while (true) {
+                                                    try {
+                                                        System.out.print("Enter year and month (YYYY-MM) to view sales for the month: ");
+                                                        String monthInput = scanner.nextLine();
+                                                        if(monthInput.equals("-1")) break;
+                                                        LocalDate monthDate = LocalDate.parse(monthInput + "-01");
+                                                        double monthlySales = 0.0;
+                                                        try {
+                                                            Map<String, ?> orders = stub.viewFoodData("FoodOrder");
+                                                            for (Map.Entry<String, ?> entry : orders.entrySet()) {
+                                                                Order order = (Order) entry.getValue();
+                                                                LocalDateTime orderTime = order.getOrderTime();
+                                                                if (orderTime != null && orderTime.getMonth().equals(monthDate.getMonth()) &&
+                                                                        orderTime.getYear() == monthDate.getYear()) {
+                                                                    monthlySales += order.getPrice();
+                                                                }
+                                                            }
+                                                        } catch (RemoteException e) {
+                                                            System.out.println("Error retrieving sales data: " + e.getMessage());
+                                                            break;
+                                                        }
+                                                        System.out.println("Total sales for " + monthDate.getMonth() + " " + monthDate.getYear() + ": " + monthlySales);
+                                                    }catch (Exception e){
+                                                        System.out.println("Incorrect date format. Please enter the date in 'YYYY-MM' format.");
+                                                    }
+                                                }
+                                            default:
+                                                break;
+                                        }
                                     }
-
-                                    switch (salesChoice) {
-                                        case 1:
-                                            System.out.print("Enter date (YYYY-MM-DD) to view sales: ");
-                                            String dateInput = scanner.nextLine();
-                                            LocalDate date = LocalDate.parse(dateInput);
-                                            double dailySales = 0.0;
-                                            try {
-                                                Map<String, ?> orders = stub.viewFoodData("FoodOrder");
-                                                for (Map.Entry<String, ?> entry : orders.entrySet()) {
-                                                    Order order = (Order) entry.getValue();
-                                                    LocalDateTime orderTime = order.getOrderTime();
-                                                    if (orderTime != null && orderTime.toLocalDate().equals(date)) {
-                                                        dailySales += order.getTotalPrice();
-                                                    }
-                                                }
-                                            } catch (RemoteException e) {
-                                                System.out.println("Error retrieving sales data: " + e.getMessage());
-                                                return;
-                                            }
-                                            System.out.println("Total sales for " + date + ": " + dailySales);
-                                            break;
-
-                                        case 2:
-                                            System.out.print("Enter date (YYYY-MM-DD) to view sales for the week: ");
-                                            String weekDateInput = scanner.nextLine();
-                                            LocalDate weekDate = LocalDate.parse(weekDateInput);
-                                            double weeklySales = 0.0;
-                                            try {
-                                                Map<String, ?> orders = stub.viewFoodData("FoodOrder");
-                                                for (Map.Entry<String, ?> entry : orders.entrySet()) {
-                                                    Order order = (Order) entry.getValue();
-                                                    LocalDateTime orderTime = order.getOrderTime();
-                                                    if (orderTime != null && orderTime.toLocalDate().isAfter(weekDate.minusDays(1)) &&
-                                                            orderTime.toLocalDate().isBefore(weekDate.plusDays(7))) {
-                                                        weeklySales += order.getTotalPrice();
-                                                    }
-                                                }
-                                            } catch (RemoteException e) {
-                                                System.out.println("Error retrieving sales data: " + e.getMessage());
-                                                return;
-                                            }
-                                            System.out.println("Total sales for the week starting " + weekDate + ": " + weeklySales);
-                                            break;
-
-                                        case 3:
-                                            System.out.print("Enter year and month (YYYY-MM) to view sales for the month: ");
-                                            String monthInput = scanner.nextLine();
-                                            LocalDate monthDate = LocalDate.parse(monthInput + "-01");
-                                            double monthlySales = 0.0;
-                                            try {
-                                                Map<String, ?> orders = stub.viewFoodData("FoodOrder");
-                                                for (Map.Entry<String, ?> entry : orders.entrySet()) {
-                                                    Order order = (Order) entry.getValue();
-                                                    LocalDateTime orderTime = order.getOrderTime();
-                                                    if (orderTime != null && orderTime.getMonth().equals(monthDate.getMonth()) &&
-                                                            orderTime.getYear() == monthDate.getYear()) {
-                                                        monthlySales += order.getTotalPrice();
-                                                    }
-                                                }
-                                            } catch (RemoteException e) {
-                                                System.out.println("Error retrieving sales data: " + e.getMessage());
-                                                return;
-                                            }
-                                            System.out.println("Total sales for " + monthDate.getMonth() + " " + monthDate.getYear() + ": " + monthlySales);
-                                            break;
-
-                                        default:
-                                            System.out.println("Invalid choice. Please try again.");
-                                            break;
-                                    }
+                                    break;
                                 }else if (answer==5){
                                     break;
                                 }
@@ -531,8 +567,14 @@ public class Client {
 
                                     System.out.println("Enter quantity:");
                                     int foodQuantity;
+
                                     try {
                                         foodQuantity = Integer.parseInt(scanner.nextLine());
+                                        if(foodQuantity<0){
+                                            System.out.println("Please enter correct quantity.");
+                                            break;
+                                        }
+                                        if(foodQuantity==-1) break;
                                     } catch (NumberFormatException e) {
                                         System.out.println("Invalid quantity. Please enter a valid number.");
                                         continue;
@@ -541,6 +583,7 @@ public class Client {
                                     price = selectedItem.getFoodPrice() * foodQuantity;
                                     totalPrice += price;
                                     selectedItems.add(new Cart(null,"John Doe", selectedItem, foodQuantity, price));
+                                    System.out.println("Items added to cart successfully.");
                                 }
                                 if(selectedItems.size()>0) {
                                     System.out.println("*".repeat(40));
@@ -566,25 +609,9 @@ public class Client {
                                 System.out.println("*".repeat(40));
                                 break;
                             case 2:
-                                System.out.println("This is items in your shopping cart.");
                                 Map<String, ?> cartItems = stub.viewFoodData("ShoppingCart");
-                                if (cartItems.isEmpty()) {
-                                    System.out.println("No items found in the shopping cart.");
-                                    System.out.println("*".repeat(40));
-                                    break;
-                                } else {
-                                    System.out.println("Shopping Cart:");
-                                    int i=0;
-                                    for (Map.Entry<String, ?> entry : cartItems.entrySet()) {
-                                        Cart cartItem = (Cart) entry.getValue();
-                                        if (cartItem.getCustomerName().equals("John Doe")) {
-                                            i++;
-                                            System.out.println(i+ ": "  + cartItem.getFoodItem()+ " X "+ cartItem.getQuantity() + " Price:" +cartItem.getPrice());
-                                        }
-                                    }
-                                }
                                 while (true) {
-                                    System.out.println("Food Ordering");
+                                    System.out.println("Shopping Carts");
                                     System.out.print("1. Order \n2. Remove items from shopping cart \n3.Exit \n");
                                     int choice = 0;
                                     try {
@@ -601,6 +628,7 @@ public class Client {
                                                     System.out.println("*".repeat(40));
                                                     break;
                                                 } else {
+                                                    System.out.println("*".repeat(40));
                                                     System.out.println("Shopping Cart:");
                                                     int i = 0;
                                                     List<String> cartIDs = new ArrayList<>();
@@ -611,20 +639,21 @@ public class Client {
                                                             i++;
                                                             cartIDs.add(entry.getKey());
                                                             totalOrderPrice += cartItem.getPrice();
-                                                            System.out.println(i + ": " + cartItem.getFoodItem() + " X " + cartItem.getQuantity() + " Price:" + cartItem.getPrice());
+                                                            System.out.println(cartItem.getFoodID() + ": " + cartItem.getFoodItem() + " X " + cartItem.getQuantity() + " Price:" + cartItem.getPrice());
                                                         }
                                                     }
 
                                                     if (totalOrderPrice == 0) {
                                                         System.out.println("No items found in the shopping cart.");
                                                         System.out.println("*".repeat(40));
-                                                        return;
+                                                        break;
                                                     }
 
                                                     System.out.println("Total price for the order: " + totalOrderPrice);
 
                                                     System.out.println("Enter cart number to choose or enter -1 to exit:");
                                                     int cartNumber = 0;
+
                                                     try {
                                                         cartNumber = Integer.parseInt(scanner.nextLine());
                                                         if (cartNumber == -1) {
@@ -635,30 +664,28 @@ public class Client {
                                                         continue;
                                                     }
 
-                                                    System.out.println("Please select your order type. Enter 1 for dine in, 2 for pickup, or -1 to exit");
-                                                    int orderType = 0;
-                                                    try{
-                                                        orderType = Integer.parseInt(scanner.nextLine());
-                                                    }catch (NumberFormatException e){
-                                                        System.out.println("Please enter number to choose");
-                                                    }
-                                                    if(orderType==-1) break;
-
-                                                    String orderStatus=null;
-                                                    if(orderType==1){
-                                                        orderStatus="Dine In";
-                                                    }else if(orderType==2){
-                                                        orderStatus="Pick Up";
-                                                    }else{
-                                                        System.out.println("Please select 1 or 2 to order");
-                                                        break;
-                                                    }
-
-
-                                                    if (cartNumber >= 1 && cartNumber <= cartIDs.size()) {
-                                                        String selectedCartID = cartIDs.get(cartNumber - 1);
-                                                        Cart selectedCartItem = (Cart) cartItems.get(selectedCartID);
+                                                    if (cartItems.containsKey(String.valueOf(cartNumber))) {
+                                                        Cart selectedCartItem = (Cart) cartItems.get(String.valueOf(cartNumber));
                                                         if (selectedCartItem != null) {
+                                                            System.out.println("Please select your order type. Enter 1 for dine in, 2 for pickup, or -1 to exit");
+                                                            int orderType = 0;
+                                                            try{
+                                                                orderType = Integer.parseInt(scanner.nextLine());
+                                                            }catch (NumberFormatException e){
+                                                                System.out.println("Please enter number to choose");
+                                                            }
+                                                            if(orderType==-1) break;
+
+                                                            String orderStatus=null;
+                                                            if(orderType==1){
+                                                                orderStatus="Dine In";
+                                                            }else if(orderType==2){
+                                                                orderStatus="Pick Up";
+                                                            }else{
+                                                                System.out.println("Please select 1 or 2 to order");
+                                                                break;
+                                                            }
+
                                                             double orderPrice = selectedCartItem.getPrice();
                                                             double currentBalance = stub.getBalance("John Doe");
 
@@ -676,32 +703,62 @@ public class Client {
                                                                 try {
                                                                     stub.createOrder("John Doe", selectedCartItem.getFoodItem().getFoodName(), selectedCartItem.getQuantity(), selectedCartItem.getPrice(), orderStatus, "Pending");
                                                                     stub.setBalance("John Doe", currentBalance - orderPrice);
-                                                                    cartItems.remove(selectedCartID);
+                                                                    cartItems.remove(String.valueOf(cartNumber));
                                                                     stub.updateCartData(cartItems);
                                                                     System.out.println("Order placed successfully!");
                                                                     System.out.println("Updated Balance: " + (currentBalance - orderPrice));
+                                                                    break;
                                                                 } catch (RemoteException e) {
                                                                     System.err.println("Error creating order: " + e.getMessage());
+                                                                    break;
                                                                 }
                                                             }
                                                         } else {
                                                             System.out.println("Invalid cart ID selected.");
+                                                            break;
                                                         }
                                                     } else {
                                                         System.out.println("Invalid cart number selected.");
+                                                        break;
                                                     }
                                                 }
                                             }
                                             break;
                                         case 2:
-                                            System.out.println("Enter cart ID to delete or enter -1 to exit:");
-                                            int cartID = 0;
-                                            try {
-                                                cartID = Integer.parseInt(scanner.nextLine());
-                                            }catch (NumberFormatException e){
-                                                System.out.println("Please enter number to choose");
+                                            while (true) {
+                                                try {
+                                                    Map<String, ?> cartItems1 = stub.viewFoodData("ShoppingCart");
+                                                    System.out.println("Shopping Cart:");
+
+                                                    if (cartItems1.isEmpty()) {
+                                                        System.out.println("No items found in the shopping cart.");
+                                                        System.out.println("*".repeat(40));
+                                                        break;
+                                                    } else {
+                                                        for (Map.Entry<String, ?> entry : cartItems1.entrySet()) {
+                                                            Cart cartItem = (Cart) entry.getValue();
+                                                            if (cartItem.getCustomerName().equals("John Doe")) {
+                                                                System.out.println(entry.getKey() + ": " + cartItem.getFoodItem() + " X " + cartItem.getQuantity() + " Price: " + cartItem.getPrice());
+                                                            }
+                                                        }
+                                                    }
+
+                                                    System.out.println("Enter cart ID to delete or enter -1 to exit:");
+                                                    String cartID = scanner.nextLine().trim();
+                                                    if (cartID.equals("-1")) break;
+                                                    if (cartItems1.containsKey(cartID)) {
+                                                        stub.delete(cartID, "cart");
+                                                        System.out.println("Items deleted successfully");
+                                                        break;
+                                                    } else {
+                                                        System.out.println("FoodID not found");
+                                                        break;
+                                                    }
+                                                } catch (Exception e) {
+                                                    System.out.println("Invalid input. Please try again.");
+                                                    break;
+                                                }
                                             }
-                                            if(cartID==-1)break;
                                             break;
                                         default:
                                             System.out.println("Invalid choice");
@@ -736,7 +793,7 @@ public class Client {
                                     amount = Double.parseDouble(scanner.nextLine());
                                 } catch (NumberFormatException e) {
                                     System.out.println("Invalid amount. Please enter a valid number.");
-                                    return;
+                                    break;
                                 }
 
                                 double currentBalance = stub.getBalance("John Doe");

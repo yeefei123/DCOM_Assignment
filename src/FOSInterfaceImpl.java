@@ -151,8 +151,9 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
         }
 
         int cartID = shoppingCart.size() + 1;
+        String cartIDString = String.valueOf(cartID);
         Cart newItem = new Cart(String.valueOf(cartID), customerName, foodItem, quantity, price);
-        shoppingCart.put(String.valueOf(cartID), newItem);
+        shoppingCart.put(cartIDString, newItem);
         writeToFile(CART_FILE, shoppingCart);
     }
 
@@ -239,9 +240,9 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
                 }
                 break;
             case "cart":
-                if (orders.containsKey(ID)) {
-                    orders.remove(ID);
-                    writeToFile(ORDERS_FILE, orders);
+                if (shoppingCart.containsKey(ID)) {
+                    shoppingCart.remove(ID);
+                    writeToFile(CART_FILE, shoppingCart);
                     System.out.println("Cart item deleted successfully.");
                 } else {
                     throw new RemoteException("Cart item ID not found.");

@@ -37,4 +37,9 @@ public class Cart implements Serializable {
     public double getPrice() {
         return price;
     }
+
+    @Override
+    public String toString() {
+        return foodID + "("+foodItem+")"+"(" +quantity+")" ;
+    }
 }

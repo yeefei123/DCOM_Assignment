@@ -13,7 +13,7 @@ public class Order implements Serializable {
     private String orderType;
     private String status;
     private LocalDateTime orderTime;
-    private double totalPrice;
+//    private double totalPrice;
 
     public Order(int orderId, String customerName, String item, int quantity, double price, String orderType, String status, LocalDateTime orderTime) {
         this.orderId = orderId;
@@ -24,7 +24,7 @@ public class Order implements Serializable {
         this.orderType = orderType;
         this.status = status;
         this.orderTime = orderTime;
-        this.totalPrice = calculateTotalPrice();
+//        this.totalPrice = calculateTotalPrice();
     }
 
     public int getOrderId() {
@@ -91,18 +91,18 @@ public class Order implements Serializable {
         this.orderTime = orderTime;
     }
 
-    private double calculateTotalPrice() {
-        return this.price * this.quantity;
-    }
-
-    public double getTotalPrice() {
-        return totalPrice;
-    }
+//    private double calculateTotalPrice() {
+//        return this.price * this.quantity;
+//    }
+//
+//    public double getTotalPrice() {
+//        return price;
+//    }
 
     @Override
     public String toString() {
         return "Order ID: " + orderId + ", Customer: " + customerName + ", Item: " + item +
                 ", Quantity: " + quantity + ", Total Price: " + price + ", Order Type:" + orderType +
-                ", Status: " + status + ", Order Time: " + orderTime + ", Total Price: " + totalPrice;
+                ", Status: " + status + ", Order Time: " + orderTime ;
     }
 }
