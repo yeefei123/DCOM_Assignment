@@ -19,7 +19,7 @@ public class Client {
         try {
             // Load keystore for the client
             KeyStore keyStore = KeyStore.getInstance("PKCS12");
-            keyStore.load(new FileInputStream("C:\\Users\\ASUS\\IdeaProjects\\DCOM_Assignment\\rmi-client.p12"), "password".toCharArray());
+            keyStore.load(new FileInputStream("./rmi-client.p12"), "password".toCharArray());
 
             // Set up key and trust managers
             KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
