@@ -39,7 +39,7 @@ public class Client {
             CustomRMIClientSocketFactory customClientSocketFactory = new CustomRMIClientSocketFactory(sslSocketFactory);
 
             // Get the RMI registry
-            Registry registry = LocateRegistry.getRegistry("localhost", 1099, customClientSocketFactory);
+            Registry registry = LocateRegistry.getRegistry("localhost", 1100, customClientSocketFactory);
 
             // Lookup the remote object
             FOSInterface stub = (FOSInterface) registry.lookup("FOSInterface");
