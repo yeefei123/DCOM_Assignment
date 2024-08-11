@@ -14,6 +14,7 @@ import java.util.*;
 public class Client {
     public static final String BOLD_RED = "\u001B[1;31m";
     public static final String RESET = "\u001B[0m";
+    public static String loggedInUsername;
     public static Scanner scanner = new Scanner(System.in);
     public static FOSInterface stub = null;
     public static void main(String[] args) {
@@ -584,7 +585,7 @@ public class Client {
 
                                         price = selectedItem.getFoodPrice() * foodQuantity;
                                         totalPrice += price;
-                                        selectedItems.add(new Cart(null, "John Doe", selectedItem, foodQuantity, price));
+                                        selectedItems.add(new Cart(null, loggedInUsername, selectedItem, foodQuantity, price));
                                         System.out.println("Items selected successfully.");
                                     }
                                     if (selectedItems.size() > 0) {
@@ -600,7 +601,7 @@ public class Client {
                                         String answer = scanner.nextLine();
                                         if (answer.equalsIgnoreCase("y")) {
                                             for (Cart item : selectedItems) {
-                                                stub.createCart("John Doe", item.getFoodItem(), item.getQuantity(), item.getPrice());
+                                                stub.createCart(loggedInUsername, item.getFoodItem(), item.getQuantity(), item.getPrice());
                                             }
                                             System.out.println("Items added to cart successfully.");
                                         } else {
@@ -639,7 +640,7 @@ public class Client {
                                                         double totalOrderPrice = 0;
                                                         for (Map.Entry<String, ?> entry : cartItems.entrySet()) {
                                                             Cart cartItem = (Cart) entry.getValue();
-                                                            if (cartItem.getCustomerName().equals("John Doe")) {
+                                                            if (cartItem.getCustomerName().equals(loggedInUsername)) {
                                                                 i++;
                                                                 cartIDs.add(entry.getKey());
                                                                 totalOrderPrice += cartItem.getPrice();
@@ -691,7 +692,7 @@ public class Client {
                                                                 }
 
                                                                 double orderPrice = selectedCartItem.getPrice();
-                                                                double currentBalance = stub.getBalance("John Doe");
+                                                                double currentBalance = stub.getBalance(loggedInUsername);
 
                                                                 if (currentBalance < orderPrice) {
                                                                     System.out.println(BOLD_RED + "Insufficient balance to place the order." + RESET);
@@ -705,8 +706,8 @@ public class Client {
                                                                 String answer1 = scanner.nextLine();
                                                                 if (answer1.equalsIgnoreCase("y")) {
                                                                     try {
-                                                                        stub.createOrder("John Doe", selectedCartItem.getFoodItem().getFoodName(), selectedCartItem.getQuantity(), selectedCartItem.getPrice(), orderStatus, "Pending");
-                                                                        stub.setBalance("John Doe", currentBalance - orderPrice);
+                                                                        stub.createOrder(loggedInUsername, selectedCartItem.getFoodItem().getFoodName(), selectedCartItem.getQuantity(), selectedCartItem.getPrice(), orderStatus, "Pending");
+                                                                        stub.setBalance(loggedInUsername, currentBalance - orderPrice);
                                                                         cartItems.remove(String.valueOf(cartNumber));
                                                                         stub.updateCartData(cartItems);
                                                                         System.out.println("Order placed successfully!");
@@ -741,7 +742,7 @@ public class Client {
                                                         } else {
                                                             for (Map.Entry<String, ?> entry : cartItems1.entrySet()) {
                                                                 Cart cartItem = (Cart) entry.getValue();
-                                                                if (cartItem.getCustomerName().equals("John Doe")) {
+                                                                if (cartItem.getCustomerName().equals(loggedInUsername)) {
                                                                     System.out.println(entry.getKey() + ": " + cartItem.getFoodItem() + " X " + cartItem.getQuantity() + " Price: " + cartItem.getPrice());
                                                                 }
                                                             }
@@ -788,14 +789,14 @@ public class Client {
                                     System.out.println("*".repeat(40));
                                     break;
                                 case 4:
-                                    double balance = stub.getBalance("John Doe");
+                                    double balance = stub.getBalance(loggedInUsername);
                                     System.out.println("\n--------------------------------------\n" +
                                             "            Check Balance        \n" +
                                             "--------------------------------------");
                                     System.out.println("Your current balance is: " + balance);
                                     break;
                                 case 5:
-                                    balance = stub.getBalance("John Doe");
+                                    balance = stub.getBalance(loggedInUsername);
                                     System.out.println("\n--------------------------------------\n" +
                                             "             Add Balance        \n" +
                                             "--------------------------------------");
@@ -809,8 +810,8 @@ public class Client {
                                         break;
                                     }
 
-                                    double currentBalance = stub.getBalance("John Doe");
-                                    stub.setBalance("John Doe", currentBalance + amount);
+                                    double currentBalance = stub.getBalance(loggedInUsername);
+                                    stub.setBalance(loggedInUsername, currentBalance + amount);
                                     System.out.println("Balance updated successfully! New balance: " + (currentBalance + amount));
                                     break;
                                 default:
@@ -928,6 +929,7 @@ public class Client {
                         }
 
                         if (isLoginSuccess) {
+                            loggedInUsername = inputUsername;
                             retry = false;
                             System.out.println("Login successful! ");
                             break;
