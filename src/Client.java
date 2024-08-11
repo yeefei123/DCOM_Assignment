@@ -550,7 +550,7 @@ public class Client {
                                             }
                                         }
 
-                                        System.out.println("Enter food ID to add to cart or enter -1 to exit:");
+                                        System.out.println("Enter food ID to add to cart or enter -1 to exit and add all selected items into shopping cart:");
                                         String foodID = scanner.nextLine();
 
                                         if (foodID.equals("-1")) {
@@ -581,7 +581,7 @@ public class Client {
                                         price = selectedItem.getFoodPrice() * foodQuantity;
                                         totalPrice += price;
                                         selectedItems.add(new Cart(null, "John Doe", selectedItem, foodQuantity, price));
-                                        System.out.println("Items added to cart successfully.");
+                                        System.out.println("Items selected successfully.");
                                     }
                                     if (selectedItems.size() > 0) {
                                         System.out.println("*".repeat(40));
