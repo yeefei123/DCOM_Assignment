@@ -504,10 +504,12 @@ public class Client {
                         }
 
                         while(true) {
-                            System.out.println("Welcome to McGee Food Ordering System");
+                            System.out.println("\n╔════════════════════════════════════════════════════════╗\n" +
+                                    "║          Welcome to McGee Food Ordering System         ║\n" +
+                                    "╚════════════════════════════════════════════════════════╝");
                             System.out.println("1. Food Menu");
                             System.out.println("2. Shopping Cart");
-                            System.out.println("3. Food Order");
+                            System.out.println("3. Food Order History");
                             System.out.println("4. Check Balance");
                             System.out.println("5. Add Balance");
                             System.out.println("6. Exit");
@@ -525,7 +527,7 @@ public class Client {
                                     continue;
                                 }
                             } catch (NumberFormatException e) {
-                                System.out.println("Please enter a number to choose an action.");
+                                System.out.println("Invalid input. Please enter a number.");
                                 continue;
                             }
 
@@ -544,7 +546,9 @@ public class Client {
                                             System.out.println("*".repeat(40));
                                             break;
                                         } else {
-                                            System.out.println("Food Menu:");
+                                            System.out.println("\n-----------------------------------\n" +
+                                                    "            Food Menu        \n" +
+                                                    "-----------------------------------");
                                             for (Map.Entry<String, ?> entry : foodItemsMap.entrySet()) {
                                                 FoodItems foodItem = (FoodItems) entry.getValue();
                                                 FoodCategory foodCategory = (FoodCategory) foodCategoriesMap.get(foodItem.getFoodCategory());
@@ -606,13 +610,15 @@ public class Client {
                                         }
                                         System.out.println("*".repeat(40));
                                     }
-                                    System.out.println("*".repeat(40));
                                     break;
                                 case 2:
                                     Map<String, ?> cartItems = stub.viewFoodData("ShoppingCart");
                                     while (true) {
-                                        System.out.println("Shopping Carts");
-                                        System.out.print("1. Order \n2. Remove items from shopping cart \n3.Exit \n");
+                                        System.out.println("\n-----------------------------------\n" +
+                                                "           Shopping Cart        \n" +
+                                                "-----------------------------------");
+                                        System.out.print("1. Check Out \n2. Remove Items from Shopping Cart \n3. Exit \n");
+                                        System.out.println("Enter number of action to perform:");
                                         int choice = 0;
                                         try {
                                             choice = Integer.parseInt(scanner.nextLine());
@@ -751,7 +757,7 @@ public class Client {
                                                             System.out.println("Items deleted successfully");
                                                             break;
                                                         } else {
-                                                            System.out.println("FoodID not found");
+                                                            System.out.println("Cart ID not found");
                                                             break;
                                                         }
                                                     } catch (Exception e) {
@@ -767,7 +773,9 @@ public class Client {
                                     }
                                     break;
                                 case 3:
-                                    System.out.println("This is order that you have made in McGee Restaurant");
+                                    System.out.println("\n-------------------------------------\n" +
+                                            "          Food Order History        \n" +
+                                            "--------------------------------------");
                                     Map<String, ?> categories1 = stub.viewFoodData("FoodOrder");
                                     if (categories1.isEmpty()) {
                                         System.out.println("No food order found.");
@@ -783,9 +791,17 @@ public class Client {
                                     break;
                                 case 4:
                                     double balance = stub.getBalance("John Doe");
-                                    System.out.println("Current Balance: " + balance);
+                                    System.out.println("\n--------------------------------------\n" +
+                                            "            Check Balance        \n" +
+                                            "--------------------------------------");
+                                    System.out.println("Your current balance is: " + balance);
                                     break;
                                 case 5:
+                                    balance = stub.getBalance("John Doe");
+                                    System.out.println("\n--------------------------------------\n" +
+                                            "             Add Balance        \n" +
+                                            "--------------------------------------");
+                                    System.out.println("Your current balance is: " + balance);
                                     System.out.println("Enter amount to add or -1 to exit:");
                                     double amount;
                                     try {
@@ -797,7 +813,7 @@ public class Client {
 
                                     double currentBalance = stub.getBalance("John Doe");
                                     stub.setBalance("John Doe", currentBalance + amount);
-                                    System.out.println("Balance updated successfully. New balance: " + (currentBalance + amount));
+                                    System.out.println("Balance updated successfully! New balance: " + (currentBalance + amount));
                                     break;
                                 default:
                                     break;
@@ -819,7 +835,9 @@ public class Client {
 
         try {
             do {
-                System.out.println("Welcome to McGee Food Ordering System");
+                System.out.println("\n╔════════════════════════════════════════════════════════╗\n" +
+                                "║          Welcome to McGee Food Ordering System         ║\n" +
+                                "╚════════════════════════════════════════════════════════╝");
                 System.out.println("1. Register");
                 System.out.println("2. Login");
                 System.out.println("3. Exit");
@@ -923,14 +941,10 @@ public class Client {
                         return true;
                 }
             } while (retry);
-
-
         } catch (Exception ex) {
 
         }
-
         return false;
     }
-
 
 }
