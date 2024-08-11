@@ -45,7 +45,14 @@ public class Client {
             FOSInterface stub = (FOSInterface) registry.lookup("FOSInterface");
 
             while (true) {
-                System.out.println("Welcome to McGee restaurant \nSelect your role:\n1. Admin\n2. Customer \n3. Exit");
+                System.out.println("╔═══════════════════════════════════════════╗\n" +
+                        "║         Welcome to McGee Restaurant       ║\n" +
+                        "╚═══════════════════════════════════════════╝ \n" +
+                        "Select your role:\n" +
+                        "1. Admin\n" +
+                        "2. Customer\n" +
+                        "3. Exit\n" +
+                        "Enter your choice: ");
                 Scanner scanner = new Scanner(System.in);
                 int role;
                 try {
@@ -57,14 +64,19 @@ public class Client {
 
                 if (role == 1) {
                     while (true) {
-                        System.out.println("Admin Login");
+                        System.out.println("\n--------------------------------\n" +
+                                "          Admin Login                   \n" +
+                                "--------------------------------");
                         System.out.println("Enter admin password or enter -1 to exit:");
                         String password = scanner.nextLine();
                         if (password.equals("-1")) break;
                         if (password.equals("1234")) {
                             while (true) {
-                                System.out.println("Admin Menu \n1. Food Category \n2. Food Items \n3. View Food Order \n4. View Total Sales \n5. Exit");
-                                System.out.println("Enter number to choose or -1 to exit");
+                                System.out.println("\n--------------------------------\n" +
+                                        "          Admin Menu                   \n" +
+                                        "--------------------------------\n" +
+                                        "1. Food Category \n2. Food Items \n3. View Food Order \n4. View Total Sales \n5. Exit");
+                                System.out.println("Enter number to choose or -1 to exit:");
                                 int answer;
                                 try {
                                     answer = Integer.parseInt(scanner.nextLine());
@@ -79,7 +91,7 @@ public class Client {
                                         int choice=0;
                                         if(choice==-1) break;
                                         if(choice>5 || choice<1){
-                                            System.out.println("Invalid choice. Please choose from the menu");
+                                            System.out.println("Invalid choice. Please choose from the menu.");
                                             break;
                                         }
                                         try {
@@ -188,8 +200,11 @@ public class Client {
                                         if (choice == 5) break;
                                     }
                                 } else if (answer == 2) {
-                                    System.out.println("Admin Edit Food Items");
-                                    System.out.println("Admin Edit Food Items:\n1. View Food Items\n2. Create Food Items\n3. Update Food Items \n4. Delete Food Items \n5. Exit");
+                                    System.out.println("\n--------------------------------\n" +
+                                            "      Admin Edit Food Items      \n" +
+                                            "--------------------------------\n" +
+                                            "1. View Food Items\n2. Create Food Items\n3. Update Food Items \n4. Delete Food Items \n5. Exit");
+                                    System.out.println("Enter menu number to choose or -1 to exit:");
                                     int choice;
                                     try {
                                         choice = Integer.parseInt(scanner.nextLine());
@@ -212,7 +227,7 @@ public class Client {
                                             break;
                                         case 2:
                                             while (true) {
-                                                System.out.println("Create Food Category for McGee\nIf you want to exit, please enter -1");
+                                                System.out.println("\nCreate Food Category for McGee\nIf you want to exit, please enter -1");
                                                 System.out.println("Enter food item name to add:");
                                                 String foodName = scanner.nextLine().trim();
                                                 if (foodName.equals("-1")) break;
@@ -240,49 +255,28 @@ public class Client {
                                             }
                                             break;
                                         case 3:
-
                                             while (true) {
-
                                                 Map<String,?> categories1 = stub.viewFoodData("FoodItems");
-
                                                 if (categories1.isEmpty()) {
-
                                                     System.out.println("No food items found.");
-
                                                 } else {
-
                                                     System.out.println("Food Items:");
-
                                                     for (Map.Entry<String,?> entry : categories1.entrySet()) {
-
                                                         System.out.println(entry.getKey() + ": " + entry.getValue().toString());
-
                                                     }
-
                                                 }
 
                                                 System.out.println("Enter food item ID to modify or enter -1 to exit:");
-
                                                 String foodID = scanner.nextLine().trim();
-
                                                 if (foodID.equals("-1")) break;
-
                                                 if (categories1.containsKey(foodID)) {
-
                                                     System.out.println("Do you want to change food item name or food item price? \n1. Food Item Name \n2. Food Item Price \n3. Back");
-
                                                     int answer2;
-
                                                     try {
-
                                                         answer2 = Integer.parseInt(scanner.nextLine());
-
                                                     } catch (NumberFormatException e) {
-
                                                         System.out.println("Invalid input. Please enter a number.");
-
                                                         continue;
-
                                                     }
 
                                                     if (answer2 == 1) {
@@ -389,10 +383,9 @@ public class Client {
                                         System.out.println("1. View total sales per day");
                                         System.out.println("2. View total sales per week");
                                         System.out.println("3. View total sales per month");
-                                        System.out.println("Enter number to choose or -1 to exit");
+                                        System.out.println("Enter number to choose or -1 to exit:");
 
                                         int salesChoice = 0;
-
 
                                         try {
                                             salesChoice = Integer.parseInt(scanner.nextLine());
@@ -409,7 +402,7 @@ public class Client {
                                             case 1:
                                                 while(true) {
                                                     try {
-                                                        System.out.print("Enter date (YYYY-MM-DD) to view sales: ");
+                                                        System.out.print("Enter date (YYYY-MM-DD) to view sales for the day: ");
                                                         String dateInput = scanner.nextLine();
                                                         if (dateInput.equals("-1")) break;
                                                         LocalDate date = LocalDate.parse(dateInput);
@@ -486,6 +479,7 @@ public class Client {
                                                             break;
                                                         }
                                                         System.out.println("Total sales for " + monthDate.getMonth() + " " + monthDate.getYear() + ": " + monthlySales);
+                                                        break;
                                                     }catch (Exception e){
                                                         System.out.println("Incorrect date format. Please enter the date in 'YYYY-MM' format.");
                                                     }
@@ -494,7 +488,6 @@ public class Client {
                                                 break;
                                         }
                                     }
-                                    break;
                                 }else if (answer==5){
                                     break;
                                 }
