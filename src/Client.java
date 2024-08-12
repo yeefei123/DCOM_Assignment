@@ -82,16 +82,19 @@ public class Client {
                         String password = scanner.nextLine();
                         if (password.equals("-1")) break;
                         if (password.equals("1234")) {
+                            System.out.println("Admin login successfully.");
                             while (true) {
-                                System.out.println("Admin login successfully.");
                                 System.out.println("\n╔═════════════════════════════════╗\n" +
                                         "║            Admin Menu           ║\n" +
                                         "╚═════════════════════════════════╝\n" +
                                         "1. Food Category \n2. Food Items \n3. View Food Order \n4. View Total Sales \n5. Exit");
-                                System.out.println("Enter number to choose or -1 to exit:");
+                                System.out.println("Enter number to choose:");
                                 int answer;
                                 try {
                                     answer = Integer.parseInt(scanner.nextLine());
+                                    if(answer<1 || answer > 5) {
+                                        System.out.println(BOLD_RED + "Please choose from the menu.\n" + RESET);
+                                    }
                                 } catch (NumberFormatException e) {
                                     System.out.println(BOLD_RED + "Invalid input. Please enter a number." + RESET);
                                     continue;
@@ -104,13 +107,16 @@ public class Client {
                                                 "1. View Food Category\n2. Create Food Categories\n3. Update Food Categories \n4. Delete Food Categories \n5. Exit");
                                         System.out.println("Enter menu number to choose or -1 to exit:");
                                         int choice = 0;
-                                        if(choice==-1) break;
+
                                         try {
                                             choice = Integer.parseInt(scanner.nextLine());
+                                            if(choice==-1) break;
+
                                         } catch (NumberFormatException e) {
                                             System.out.println(BOLD_RED + "Invalid input. Please enter a number.\n" + RESET);
                                             continue;
                                         }
+
                                         switch (choice) {
                                             case 1:
                                                 Map<String, ?> categories = stub.viewFoodData("FoodCategory");
@@ -206,8 +212,8 @@ public class Client {
                                                 break;
                                             default:
                                                 System.out.println(BOLD_RED + "Please choose from the menu."+ RESET);
+                                                break;
                                         }
-                                        if (choice == 5) break;
                                     }
                                 } else if (answer == 2) {
                                     System.out.println("\n---------------------------------\n" +
