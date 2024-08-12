@@ -74,6 +74,7 @@ public class Client {
                         if (password.equals("-1")) break;
                         if (password.equals("1234")) {
                             while (true) {
+                                System.out.println("Admin login successfully.");
                                 System.out.println("\n╔═════════════════════════════════╗\n" +
                                         "║            Admin Menu           ║\n" +
                                         "╚═════════════════════════════════╝\n" +
@@ -194,6 +195,8 @@ public class Client {
                                                 break;
                                             case 5:
                                                 break;
+                                            default:
+                                                System.out.println(BOLD_RED + "Please choose from the menu."+ RESET);
                                         }
                                         if (choice == 5) break;
                                     }
