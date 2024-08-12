@@ -47,6 +47,15 @@ public class Client {
             stub = (FOSInterface) registry.lookup("FOSInterface");
 
             while (true) {
+                    System.out.println("            ______________________");
+                    System.out.println("           /        MCGEE         \\");
+                    System.out.println("          /       RESTAURANT       \\");
+                    System.out.println("         /__________________________\\");
+                    System.out.println("         |    ______    ____    ____|");
+                    System.out.println("         |   |      |  |    |  |    |");
+                    System.out.println("         |___|______|__|____|__|____|");
+                    System.out.println("         |         WELCOME!         |");
+                    System.out.println("         |__________________________|");
                 System.out.println("╔═══════════════════════════════════════════╗\n" +
                         "║         Welcome to McGee Restaurant       ║\n" +
                         "╚═══════════════════════════════════════════╝ \n" +
