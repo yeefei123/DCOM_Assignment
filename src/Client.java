@@ -95,6 +95,7 @@ public class Client {
                                     if(answer<1 || answer > 5) {
                                         System.out.println(BOLD_RED + "Please choose from the menu.\n" + RESET);
                                     }
+                                    if (answer == 5) break;
                                 } catch (NumberFormatException e) {
                                     System.out.println(BOLD_RED + "Invalid input. Please enter a number." + RESET);
                                     continue;
@@ -105,12 +106,10 @@ public class Client {
                                                 "      Admin Edit Food Category      \n" +
                                                 "------------------------------------\n" +
                                                 "1. View Food Category\n2. Create Food Categories\n3. Update Food Categories \n4. Delete Food Categories \n5. Exit");
-                                        System.out.println("Enter menu number to choose or -1 to exit:");
+                                        System.out.println("Enter menu number to choose: ");
                                         int choice = 0;
-
                                         try {
                                             choice = Integer.parseInt(scanner.nextLine());
-                                            if(choice==-1) break;
 
                                         } catch (NumberFormatException e) {
                                             System.out.println(BOLD_RED + "Invalid input. Please enter a number.\n" + RESET);
@@ -213,6 +212,8 @@ public class Client {
                                             default:
                                                 System.out.println(BOLD_RED + "Please choose from the menu."+ RESET);
                                                 break;
+                                        }if (choice == 5){
+                                            break;
                                         }
                                     }
                                 } else if (answer == 2) {
@@ -401,24 +402,23 @@ public class Client {
                                     while (true) {
                                         System.out.println("\n-----------------------------------\n" +
                                                 "         View Total Sales      \n" +
-                                                "-----------------------------------\n"+
-                                                "1. View total sales per day" + "\n2. View total sales per week" + "\n3. View total sales per month");
-                                        System.out.println("Enter number to choose or -1 to exit:");
+                                                "-----------------------------------\n" +
+                                                "1. View total sales per day" + "\n2. View total sales per week" + "\n3. View total sales per month" + "\n4. Exit");
+                                        System.out.println("Enter number to choose:");
                                         int salesChoice = 0;
                                         try {
                                             salesChoice = Integer.parseInt(scanner.nextLine());
-                                            if (salesChoice == -1) break;
-                                            if (salesChoice > 3 || salesChoice < 1) {
+                                            if (salesChoice > 4 || salesChoice < 1) {
                                                 System.out.println(BOLD_RED + "Invalid choice. Please choose from menu" + RESET);
-                                                break;
+                                                continue;
                                             }
                                         } catch (NumberFormatException e) {
-                                            System.out.println(BOLD_RED +"Invalid input. Please enter a number." + RESET);
+                                            System.out.println(BOLD_RED + "Invalid input. Please enter a number." + RESET);
                                         }
 
                                         switch (salesChoice) {
                                             case 1:
-                                                while(true) {
+                                                while (true) {
                                                     try {
                                                         System.out.print("\nEnter date (YYYY-MM-DD) to view sales for the day or enter -1 to exit: ");
                                                         String dateInput = scanner.nextLine();
@@ -438,7 +438,7 @@ public class Client {
                                                             System.out.println(BOLD_RED + "Error retrieving sales data: " + e.getMessage() + RESET);
                                                         }
                                                         System.out.println("Total sales for " + date + ": " + dailySales);
-                                                    }catch (Exception ex){
+                                                    } catch (Exception ex) {
                                                         System.out.println(BOLD_RED + "Incorrect date format. Please enter the date in 'YYYY-MM-DD' format." + RESET);
                                                         continue;
                                                     }
@@ -466,7 +466,7 @@ public class Client {
                                                             System.out.println("Error retrieving sales data: " + e.getMessage());
                                                         }
                                                         System.out.println("Total sales for the week starting " + weekDate + ": " + weeklySales);
-                                                    }catch (Exception ex){
+                                                    } catch (Exception ex) {
                                                         System.out.println(BOLD_RED + "Incorrect date format. Please enter the date in 'YYYY-MM-DD' format." + RESET);
                                                         continue;
                                                     }
@@ -477,7 +477,7 @@ public class Client {
                                                     try {
                                                         System.out.print("\nEnter year and month (YYYY-MM) to view sales for the month or enter -1 to exit: ");
                                                         String monthInput = scanner.nextLine();
-                                                        if(monthInput.equals("-1")) break;
+                                                        if (monthInput.equals("-1")) break;
                                                         LocalDate monthDate = LocalDate.parse(monthInput + "-01");
                                                         double monthlySales = 0.0;
                                                         try {
@@ -495,17 +495,20 @@ public class Client {
                                                             break;
                                                         }
                                                         System.out.println("Total sales for " + monthDate.getMonth() + " " + monthDate.getYear() + ": " + monthlySales);
-                                                    }catch (Exception e){
+                                                    } catch (Exception e) {
                                                         System.out.println(BOLD_RED + "Incorrect date format. Please enter the date in 'YYYY-MM' format." + RESET);
                                                         continue;
                                                     }
                                                 }
+                                                break;
+                                            case 4:
+                                                break;
                                             default:
                                                 break;
+                                        }if (salesChoice == 4){
+                                            break;
                                         }
                                     }
-                                }else if (answer==5){
-                                    break;
                                 }
                             }
                         } else {
@@ -648,7 +651,6 @@ public class Client {
                                                 while (true) {
                                                     if (cartItems.isEmpty()) {
                                                         System.out.println(BOLD_RED + "No items found in the shopping cart." + RESET);
-                                                        System.out.println("*".repeat(40));
                                                         break;
                                                     } else {
                                                         System.out.println("*".repeat(40));
@@ -751,15 +753,13 @@ public class Client {
                                                 while (true) {
                                                     try {
                                                         Map<String, ?> cartItems1 = stub.viewFoodData("ShoppingCart");
-                                                        System.out.println("Shopping Cart:");
-
                                                         if (cartItems1.isEmpty()) {
                                                             System.out.println(BOLD_RED + "No items found in the shopping cart." + RESET);
-                                                            System.out.println("*".repeat(40));
                                                             break;
                                                         } else {
                                                             for (Map.Entry<String, ?> entry : cartItems1.entrySet()) {
                                                                 Cart cartItem = (Cart) entry.getValue();
+                                                                System.out.println("Shopping Cart:");
                                                                 if (cartItem.getCustomerName().equals(loggedInUsername)) {
                                                                     System.out.println(entry.getKey() + ": " + cartItem.getFoodItem() + " X " + cartItem.getQuantity() + " Price: " + cartItem.getPrice());
                                                                 }
@@ -786,7 +786,6 @@ public class Client {
                                             default:
                                                 System.out.println(BOLD_RED + "Invalid choice" + RESET);
                                         }
-                                        System.out.println("*".repeat(40));
                                     }
                                     break;
                                 case 3:
@@ -794,15 +793,16 @@ public class Client {
                                             "          Food Order History        \n" +
                                             "--------------------------------------");
                                     Map<String, ?> categories1 = stub.viewFoodData("FoodOrder");
-                                    if (categories1.isEmpty()) {
-                                        System.out.println(BOLD_RED +"No food order found."+ RESET);
-                                        System.out.println("*".repeat(40));
-                                        break;
-                                    } else {
-                                        System.out.println("Food Orders:");
-                                        for (Map.Entry<String, ?> entry : categories1.entrySet()) {
-                                            System.out.println(entry.getKey() + ": " + entry.getValue().toString());
+                                    boolean hasOrder = false;
+                                    for (Map.Entry<String, ?> entry : categories1.entrySet()) {
+                                        String value = entry.getValue().toString();
+                                        if (value.contains("Customer: " + loggedInUsername)) {
+                                            System.out.println("Order ID: " + entry.getKey() + ", " + value);
+                                            hasOrder = true;
                                         }
+                                    }
+                                    if (!hasOrder) {
+                                        System.out.println(BOLD_RED + "No food order found for " + loggedInUsername + "." + RESET);
                                     }
                                     System.out.println("*".repeat(40));
                                     break;
