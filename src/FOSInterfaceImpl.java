@@ -74,6 +74,7 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
 
     @Override
     public boolean checkDuplicate(String userName) throws RemoteException {
+        customers = (Map<String, Customer>) readFromFile(CUSTOMER_FILE);
         for (Map.Entry<String, Customer> entry : customers.entrySet()) {
             String customerId = entry.getKey();
             Customer customer = entry.getValue();
@@ -86,12 +87,14 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
     }
 
     @Override
-    public void register(String username, String password, String phoneNumber, String address) throws RemoteException {
-        // Read the existing food items from the file
+    public void register(String username, String password, String firstName, String lastName, String icOrPassportNumber, String phoneNumber, String address) throws RemoteException {
         customers = (Map<String, Customer>) readFromFile(CUSTOMER_FILE);
-        Customer newCustomer = new Customer(username,password,phoneNumber,address);
-        customers.put(newCustomer.getCustomerId(), newCustomer);
+        int customerId = customers.size() + 1;
+        String customerIdString = String.valueOf(customerId);
+        Customer newCustomer = new Customer(customerIdString, username, password, firstName, lastName, icOrPassportNumber, phoneNumber, address);
+        customers.put(customerIdString, newCustomer);
         writeToFile(CUSTOMER_FILE, customers);
+        System.out.println(newCustomer.getUsername() + " register successfully");
     }
 
     @Override
@@ -99,7 +102,9 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
         for (Map.Entry<String, Customer> entry : customers.entrySet()) {
             String customerId = entry.getKey();
             Customer customer = entry.getValue();
+
             if(Objects.equals(userName.toLowerCase(), customer.getUsername().toLowerCase()) && Objects.equals(password,customer.getPassword())){
+                System.out.println(customer.getUsername() + " login successfully");
                 currentCustomer = customer;
                 return true;
             }
@@ -111,6 +116,18 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
     @Override
     public Customer getCurrentLoginCustomer() throws RemoteException {
         return currentCustomer;
+    }
+
+    @Override
+    public void updateProfile(String customerId, Customer newCustomer) throws RemoteException {
+        if(customers.containsKey(customerId)) {
+            customers.put(customerId, newCustomer);
+            System.out.println("Customer profile updated successfully.");
+            writeToFile(CUSTOMER_FILE, customers);
+            currentCustomer = newCustomer;
+        } else {
+            System.out.println("Customer ID not found. Please try again.");
+        }
     }
 
     @Override

@@ -4,18 +4,23 @@ public class Customer implements Serializable {
     private String customerId;
     private String username;
     private String password;
+    private String firstName;
+    private String lastName;
+    private String icOrPassportNumber;
     private String phoneNumber;
     private String address;
     private static int customerCount = 1;
     private static final long serialVersionUID = -1618644082963435396L;
 
-    public Customer(String username, String password, String phoneNumber, String address) {
-        this.customerId = String.valueOf(customerCount);
+    public Customer(String customerId, String username, String password, String firstName, String lastName, String icOrPassportNumber, String phoneNumber, String address) {
+        this.customerId = customerId;
         this.username = username;
         this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.icOrPassportNumber = icOrPassportNumber;
         this.phoneNumber = phoneNumber;
         this.address = address;
-        customerCount++;
     }
 
     public String getCustomerId() {
@@ -42,6 +47,30 @@ public class Customer implements Serializable {
         this.password = password;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getIcOrPassportNumber() {
+        return icOrPassportNumber;
+    }
+
+    public void setIcOrPassportNumber(String icOrPassportNumber) {
+        this.icOrPassportNumber = icOrPassportNumber;
+    }
+
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -55,7 +84,19 @@ public class Customer implements Serializable {
     }
 
     public void setAddress(String address) {
-        address = address;
+        this.address = address;
+    }
+
+    public static int getCustomerCount() {
+        return customerCount;
+    }
+
+    public static void setCustomerCount(int customerCount) {
+        Customer.customerCount = customerCount;
+    }
+
+    public String getFullName(){
+        return this.firstName + " " + this.lastName;
     }
 
     @Override
@@ -64,8 +105,11 @@ public class Customer implements Serializable {
                 "customerId='" + customerId + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", icOrPassportNumber='" + icOrPassportNumber + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
-                ", Address='" + address + '\'' +
+                ", address='" + address + '\'' +
                 '}';
     }
 }

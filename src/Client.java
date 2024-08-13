@@ -533,17 +533,18 @@ public class Client {
                             System.out.println("3. Food Order History");
                             System.out.println("4. Check Balance");
                             System.out.println("5. Add Balance");
-                            System.out.println("6. Exit");
+                            System.out.println("6. My profile");
+                            System.out.println("7. Exit");
                             System.out.println("Enter number of action to perform:");
 
                             int actionNum;
                             try {
                                 actionNum = Integer.parseInt(scanner.nextLine());
-                                if (actionNum == 6) {
+                                if (actionNum == 7) {
                                     break;
                                 }
 
-                                if (actionNum < 1 || actionNum > 6) {
+                                if (actionNum < 1 || actionNum > 7) {
                                     System.out.println(BOLD_RED + "Please enter number between 1 to 6 to choose." + RESET);
                                     continue;
                                 }
@@ -833,6 +834,112 @@ public class Client {
                                     stub.setBalance(loggedInUsername, currentBalance + amount);
                                     System.out.println("Balance updated successfully! New balance: " + (currentBalance + amount));
                                     break;
+
+                                case 6:
+                                    boolean continueProfileUpdate = true;
+                                    do{
+                                        System.out.println("\n--------------------------------------\n" +
+                                                "             Profile        \n" +
+                                                "--------------------------------------");
+                                        System.out.println();
+                                        loginCustomer = stub.getCurrentLoginCustomer();
+                                        System.out.println("Username: " + loginCustomer.getUsername());
+                                        System.out.println("Password: " + loginCustomer.getPassword());
+                                        System.out.println("First Name: " + loginCustomer.getFirstName());
+                                        System.out.println("Last Name: " + loginCustomer.getLastName());
+                                        System.out.println("icOrPassportNumber: " + loginCustomer.getIcOrPassportNumber());
+                                        System.out.println("Phone Number: " + loginCustomer.getPhoneNumber());
+                                        System.out.println("Address: " + loginCustomer.getAddress());
+
+                                        System.out.println();
+                                        System.out.println("1. Edit Username");
+                                        System.out.println("2. Edit Password");
+                                        System.out.println("3. Edit First Name");
+                                        System.out.println("4. Edit Last Name");
+                                        System.out.println("5. Edit icOrPassportNumber");
+                                        System.out.println("6. Edit Phone Number");
+                                        System.out.println("7. Edit Address");
+                                        System.out.println("8. Back to previous");
+
+                                        boolean editProfileOptionError = true;
+                                        int editProfileOption = 0;
+                                        do {
+                                            try {
+                                                System.out.print("Enter your option: ");
+                                                editProfileOption = scanner.nextInt();
+                                                if(editProfileOption==-1) break;
+                                                if(editProfileOption  < 1 || editProfileOption > 8){
+                                                    throw new Exception(BOLD_RED + "Invalid option selected. Please enter a number between 1 to 8." + RESET);
+                                                }
+                                                editProfileOptionError = false;
+                                            }  catch (InputMismatchException e) {
+                                                System.err.println(BOLD_RED + "Please only key in integer");
+                                                scanner.nextLine();
+                                                Thread.sleep(1000);
+                                            } catch (Exception e) {
+                                                System.err.println(e.getMessage());
+                                                Thread.sleep(1000);
+                                            }
+                                        } while (editProfileOptionError);
+
+                                        String username;
+                                        String password;
+                                        String firstName;
+                                        String lastName;
+                                        String icOrPassportNumber;
+                                        String phoneNumber;
+                                        String address;
+                                        switch(editProfileOption){
+                                            case 1:
+                                                username = Validation.getValidInput("Enter your username: ", Validation.USERNAME_PATTERN, Validation.USERNAME_ERROR);
+                                                if(username.equals("-1")) break;
+                                                boolean isDuplicate = stub.checkDuplicate(username);
+                                                while (isDuplicate) {
+                                                    System.out.println(BOLD_RED + "The username you have chosen is already taken." + RESET);
+                                                    username = Validation.getValidInput("Enter your username: ", Validation.USERNAME_PATTERN, Validation.USERNAME_ERROR);
+                                                    isDuplicate = stub.checkDuplicate(username);
+                                                }
+                                                loginCustomer.setUsername(username);
+                                                break;
+                                            case 2:
+                                                password = Validation.getValidInput("Enter your password: ", Validation.PASSWORD_PATTERN, Validation.PASSWORD_ERROR);
+                                                if(password.equals("-1")) break;
+                                                loginCustomer.setPassword(password);
+                                                break;
+                                            case 3:
+                                                firstName = Validation.getValidInput("Enter your first name: ", Validation.NAME_PATTERN, Validation.NAME_ERROR);
+                                                if(firstName.equals("-1")) break;
+                                                loginCustomer.setFirstName(firstName);
+                                                break;
+                                            case 4:
+                                                lastName = Validation.getValidInput("Enter your last name: ", Validation.NAME_PATTERN, Validation.NAME_ERROR);
+                                                if(lastName.equals("-1")) break;
+                                                loginCustomer.setLastName(lastName);
+                                                break;
+                                            case 5:
+                                                icOrPassportNumber = Validation.getValidInput("Please enter your Identity Card (IC) or Passport Number: ", Validation.IC_PATTERN, Validation.IC_ERROR);
+                                                if(icOrPassportNumber.equals("-1")) break;
+                                                loginCustomer.setIcOrPassportNumber(icOrPassportNumber);
+                                                break;
+                                            case 6:
+                                                phoneNumber = Validation.getValidInput("Enter your phone number(01x-xx...): ",Validation.PHONE_PATTERN, Validation.PHONE_ERROR);
+                                                if(phoneNumber.equals("-1")) break;
+                                                loginCustomer.setPhoneNumber(phoneNumber);
+                                                break;
+                                            case 7:
+                                                address = Validation.getValidInput("Enter your address: ", Validation.ADDRESS_PATTERN, Validation.ADDRESS_ERROR);
+                                                if(address.equals("-1")) break;
+                                                loginCustomer.setAddress(address);
+                                                break;
+                                            case 8:
+                                                continueProfileUpdate = false;
+                                                break;
+                                        }
+                                        if(editProfileOption != 8){
+                                            stub.updateProfile(loginCustomer.getCustomerId(), loginCustomer);
+                                            scanner.nextLine();
+                                        }
+                                    }while(continueProfileUpdate);
                                 default:
                                     break;
                             }
@@ -887,33 +994,39 @@ public class Client {
                         //request input
                         String username;
                         String password;
+                        String firstName;
+                        String lastName;
+                        String icOrPassportNumber;
                         String phoneNumber;
                         String address;
 
                         scanner.nextLine();
-                        System.out.print("Enter your username: ");
-                        username = scanner.nextLine();
+                        username = Validation.getValidInput("Enter your username: ", Validation.USERNAME_PATTERN, Validation.USERNAME_ERROR);
+
                         if(username.equals("-1")) break;
 
                         boolean isDuplicate = stub.checkDuplicate(username);
 
                         while (isDuplicate) {
                             System.out.println(BOLD_RED + "The username you have chosen is already taken." + RESET);
-                            System.out.print("Enter your username: ");
-                            username = scanner.nextLine();
+                            username = Validation.getValidInput("Enter your username: ", Validation.USERNAME_PATTERN, Validation.USERNAME_ERROR);
                             isDuplicate = stub.checkDuplicate(username);
                         }
                         //false
                         if (!isDuplicate) {
-                            System.out.print("Enter your password: ");
-                            password = scanner.nextLine();
-                            System.out.print("Enter your phoneNumber: ");
-                            phoneNumber = scanner.nextLine();
+                            password = Validation.getValidInput("Enter your password: ", Validation.PASSWORD_PATTERN, Validation.PASSWORD_ERROR);
+                            firstName = Validation.getValidInput("Enter your first name: ", Validation.NAME_PATTERN, Validation.NAME_ERROR);
+                            if(firstName.equals("-1")) break;
+                            lastName = Validation.getValidInput("Enter your last name: ", Validation.NAME_PATTERN, Validation.NAME_ERROR);
+                            if(lastName.equals("-1")) break;;
+                            icOrPassportNumber = Validation.getValidInput("Please enter your Identity Card (IC) or Passport Number: ", Validation.IC_PATTERN, Validation.IC_ERROR);
+                            if(icOrPassportNumber.equals("-1")) break;;
+                            phoneNumber = Validation.getValidInput("Enter your phone number(01x-xx...): ",Validation.PHONE_PATTERN, Validation.PHONE_ERROR);
                             if(phoneNumber.equals("-1")) break;
-                            System.out.print("Enter your address: ");
-                            address = scanner.nextLine();
+                            address = Validation.getValidInput("Enter your address: ", Validation.ADDRESS_PATTERN, Validation.ADDRESS_ERROR);
                             if(address.equals("-1")) break;
-                            stub.register(username, password, phoneNumber, address);
+
+                            stub.register(username, password, firstName, lastName, icOrPassportNumber, phoneNumber, address);
                         }
 
                         // redirect to login page or direct go to food page

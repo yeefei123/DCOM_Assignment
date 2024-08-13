@@ -4,9 +4,10 @@ import java.util.Map;
 
 public interface FOSInterface extends Remote {
     boolean checkDuplicate(String userName) throws RemoteException;
-    void register(String username, String password, String phoneNumber, String address) throws RemoteException;
+    void register(String username, String password, String firstName, String lastName, String icOrPassportNumber, String phoneNumber, String address) throws RemoteException;
     boolean login(String username, String password) throws RemoteException;
     Customer getCurrentLoginCustomer() throws RemoteException;
+    void updateProfile(String userId, Customer customer) throws RemoteException;
 
     String placeOrder(String customerName, String item, int quantity, double price, String orderType, String status) throws RemoteException;
     Order getOrderDetails(int orderId) throws RemoteException;
