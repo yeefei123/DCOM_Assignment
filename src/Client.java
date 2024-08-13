@@ -14,6 +14,7 @@ import java.util.*;
 public class Client {
     public static final String BOLD_RED = "\u001B[1;31m";
     public static final String RESET = "\u001B[0m";
+    public static Customer loginCustomer;
     public static String loggedInUsername;
     public static Scanner scanner = new Scanner(System.in);
     public static FOSInterface stub = null;
@@ -947,7 +948,10 @@ public class Client {
                         }
 
                         if (isLoginSuccess) {
-                            loggedInUsername = inputUsername;
+                            loginCustomer = stub.getCurrentLoginCustomer();
+                            loggedInUsername = loginCustomer.getUsername();
+
+
                             retry = false;
                             System.out.println("Login successful! ");
                             break;
