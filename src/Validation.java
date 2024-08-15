@@ -10,7 +10,7 @@ public class Validation {
         do {
             System.out.print(prompt);
             input = scanner.nextLine();
-
+            if(input.equals("-1"))return null;
             if (!input.matches(pattern)) {
                 System.out.println(BOLD_RED + errorMessage + RESET);
             }

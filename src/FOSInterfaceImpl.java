@@ -213,13 +213,28 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
         if (shoppingCart == null) {
             shoppingCart = new HashMap<>();
         }
+        int maxID = 0;
+        for (String id : shoppingCart.keySet()) {
+            try {
+                int currentID = Integer.parseInt(id);
+                if (currentID > maxID) {
+                    maxID = currentID;
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+        int newID = maxID + 1;
+        String cartIDString = String.valueOf(newID);
 
-        int cartID = shoppingCart.size() + 1;
-        String cartIDString = String.valueOf(cartID);
-        Cart newItem = new Cart(String.valueOf(cartID), customerName, foodItem, quantity, price);
+        Cart newItem = new Cart(cartIDString, customerName, foodItem, quantity, price);
         shoppingCart.put(cartIDString, newItem);
+
+        System.out.println("Adding to cart: " + newItem);
+
         writeToFile(CART_FILE, shoppingCart);
     }
+
 
     @Override
     public void createOrder(String customerName, String item, int quantity, double price, String orderType, String status) throws RemoteException {
