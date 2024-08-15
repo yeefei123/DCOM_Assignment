@@ -1071,7 +1071,7 @@ public class Client {
                                                         System.out.println("Password: " + loginCustomer.getPassword());
                                                         System.out.println("First Name: " + loginCustomer.getFirstName());
                                                         System.out.println("Last Name: " + loginCustomer.getLastName());
-                                                        System.out.println("icOrPassportNumber: " + loginCustomer.getIcOrPassportNumber());
+                                                        System.out.println("IC or Passport Number: " + loginCustomer.getIcOrPassportNumber());
                                                         System.out.println("Phone Number: " + loginCustomer.getPhoneNumber());
                                                         System.out.println("Address: " + loginCustomer.getAddress());
 
@@ -1080,7 +1080,7 @@ public class Client {
                                                         System.out.println("2. Edit Password");
                                                         System.out.println("3. Edit First Name");
                                                         System.out.println("4. Edit Last Name");
-                                                        System.out.println("5. Edit icOrPassportNumber");
+                                                        System.out.println("5. Edit IC or Passport Number");
                                                         System.out.println("6. Edit Phone Number");
                                                         System.out.println("7. Edit Address");
                                                         System.out.println("8. Back to previous");
@@ -1135,7 +1135,7 @@ public class Client {
                                                                     System.out.println("Last name updated successfully");
                                                                     continue;
                                                                 case 5:
-                                                                    icOrPassportNumber = Validation.getValidInput("Please enter your Identity Card (IC) : ", Validation.IC_PATTERN, Validation.IC_ERROR);
+                                                                    icOrPassportNumber = Validation.getValidInput("Please enter your Identity Card (IC) or Passport Number: ", Validation.IC_PATTERN, Validation.IC_ERROR);
                                                                     if (icOrPassportNumber.equals("-1")) break;
                                                                     loginCustomer.setIcOrPassportNumber(icOrPassportNumber);
                                                                     System.out.println("IC updated successfully");
