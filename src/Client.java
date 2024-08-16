@@ -263,7 +263,7 @@ public class Client {
                                             break;
                                         case 2:
                                             while (true) {
-                                                System.out.println("\n═════════════ Create Food Items ══════════════\n");
+                                                System.out.println("\n═════════════ Create Food Items ══════════════");
                                                 System.out.println("Create Food Item for McGee");
                                                 System.out.println("1. Food Item \n2. Drink Item \n3. Exit");
                                                 int choice1 = 0;
@@ -310,12 +310,14 @@ public class Client {
                                                                 System.out.println("Food Item created successfully.");
                                                                 System.out.println("*".repeat(40));
                                                             } else {
-                                                                System.out.println("Please select food category ID from the list.");
+                                                                System.out.println(BOLD_RED + "Please select food category ID from the list." + RESET);
                                                                 System.out.println("*".repeat(40));
+                                                                break;
                                                             }
                                                         } else {
-                                                            System.out.println("Please select food category ID from the list.");
+                                                            System.out.println(BOLD_RED + "Please select food category ID from the list." + RESET);
                                                             System.out.println("*".repeat(40));
+                                                            break;
                                                         }
                                                         break;
                                                     case 2:
@@ -372,7 +374,7 @@ public class Client {
                                                             stub.updateFoodItemName(foodID, newFoodName);
                                                             System.out.println("Food item name updated successfully.");
                                                         } catch (RemoteException e) {
-                                                            System.out.println(BOLD_RED + "Error updating food item name: " + e.getMessage() + RESET);
+                                                            System.out.println(BOLD_RED + "Error updating food item name." + RESET);
 
                                                         }
                                                     } else if (answer2 == 2) {
@@ -388,7 +390,7 @@ public class Client {
                                                             stub.updateFoodItemPrice(foodID, newFoodPrice);
                                                             System.out.println("Food item price updated successfully.");
                                                         } catch (RemoteException e) {
-                                                            System.out.println(BOLD_RED + "Error updating food item price: " + e.getMessage() + RESET);
+                                                            System.out.println(BOLD_RED + "Error updating food item price." + RESET);
                                                         }
                                                     } else if (answer2 == 3) {
                                                         break;
@@ -504,7 +506,7 @@ public class Client {
                                                                 }
                                                             }
                                                         } catch (RemoteException e) {
-                                                            System.out.println(BOLD_RED + "Error retrieving sales data: " + e.getMessage() + RESET);
+                                                            System.out.println(BOLD_RED + "Error retrieving sales data. " + RESET);
                                                         }
                                                         System.out.println("Total sales for " + date + ": " + dailySales);
                                                     } catch (Exception ex) {
@@ -532,7 +534,7 @@ public class Client {
                                                                 }
                                                             }
                                                         } catch (RemoteException e) {
-                                                            System.out.println("Error retrieving sales data: " + e.getMessage());
+                                                            System.out.println(BOLD_RED + "Error retrieving sales data." + RESET);
                                                         }
                                                         System.out.println("Total sales for the week starting " + weekDate + ": " + weeklySales);
                                                     } catch (Exception ex) {
@@ -560,7 +562,7 @@ public class Client {
                                                                 }
                                                             }
                                                         } catch (RemoteException e) {
-                                                            System.out.println(BOLD_RED + "Error retrieving sales data: " + e.getMessage() + RESET);
+                                                            System.out.println(BOLD_RED + "Error retrieving sales data: " + RESET);
                                                             break;
                                                         }
                                                         System.out.println("Total sales for " + monthDate.getMonth() + " " + monthDate.getYear() + ": " + monthlySales);
@@ -604,11 +606,11 @@ public class Client {
                                         throw new Exception(BOLD_RED + "Invalid option selected. Please enter a number between 1 to 3." + RESET);
                                     }
                                 } catch (InputMismatchException e) {
-                                    System.err.println(BOLD_RED + "Please only key in an integer" + RESET);
+                                    System.out.println(BOLD_RED + "Please only key in an integer." + RESET);
                                     scanner.nextLine();
                                     Thread.sleep(1000);
                                 } catch (Exception e) {
-                                    System.err.println(e.getMessage());
+                                    System.out.println(BOLD_RED + "Please only key in an integer." + RESET);
                                     Thread.sleep(1000);
                                 }
 
@@ -984,7 +986,7 @@ public class Client {
                                                                                         System.out.println("Updated Balance: " + (currentBalance - orderPrice));
                                                                                         break;
                                                                                     } catch (RemoteException e) {
-                                                                                        System.err.println(BOLD_RED + "Error creating order: " + e.getMessage() + RESET);
+                                                                                        System.out.println(BOLD_RED + "Error creating order. " + RESET);
                                                                                         break;
                                                                                     }
                                                                                 }
@@ -1013,20 +1015,20 @@ public class Client {
                                                                                 if (cartItem.getCustomerName().equals(loggedInUsername)) {
                                                                                     System.out.println(entry.getKey() + ": " + cartItem.getItem() + " X " + cartItem.getQuantity() + " Price: " + cartItem.getPrice());
                                                                                 }
+                                                                            }System.out.println("Enter cart ID to delete or enter -1 to exit:");
+                                                                            String cartID = scanner.nextLine().trim();
+                                                                            if (cartID.equals("-1")) break;
+                                                                            if (cartItems1.containsKey(cartID)) {
+                                                                                stub.delete(cartID, "cart");
+                                                                                System.out.println("Items deleted successfully");
+                                                                                stub.viewFoodData("ShoppingCart");
+                                                                                break;
+                                                                            } else {
+                                                                                System.out.println(BOLD_RED +"Cart ID not found"+ RESET);
                                                                             }
+
                                                                         }
 
-                                                                        System.out.println("Enter cart ID to delete or enter -1 to exit:");
-                                                                        String cartID = scanner.nextLine().trim();
-                                                                        if (cartID.equals("-1")) break;
-                                                                        if (cartItems1.containsKey(cartID)) {
-                                                                            stub.delete(cartID, "cart");
-                                                                            System.out.println("Items deleted successfully");
-                                                                            stub.viewFoodData("ShoppingCart");
-                                                                            break;
-                                                                        } else {
-                                                                            System.out.println(BOLD_RED +"Cart ID not found"+ RESET);
-                                                                        }
 
                                                                     } catch (Exception e) {
                                                                         System.out.println(BOLD_RED + "Invalid input. Please try again." + RESET);
