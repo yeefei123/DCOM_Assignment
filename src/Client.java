@@ -450,20 +450,27 @@ public class Client {
                                             for (Map.Entry<String, ?> entry : categories1.entrySet()) {
                                                 Order foodItem = (Order) entry.getValue();
                                                 if (foodItem.getStatus().equals("Pending")) {
-                                                    System.out.println(entry.getKey() + ": " + entry.getValue().toString());
+                                                    System.out.println(entry.getKey() + ": " + foodItem.toString());
                                                     hasPendingOrders = true;
                                                 }
                                             }
                                             if (!hasPendingOrders) {
-                                                System.out.println(BOLD_RED +"No incoming food orders." + RESET);
+                                                System.out.println(BOLD_RED + "No incoming food orders." + RESET);
                                                 break;
                                             }
+
                                             System.out.println("Enter food order ID that you have completed or enter -1 to exit:");
                                             String foodOrderID = scanner.nextLine();
                                             if (foodOrderID.equals("-1")) break;
+
                                             if (!foodOrderID.isEmpty() && categories1.containsKey(foodOrderID)) {
-                                                stub.updateOrderStatus(foodOrderID, "Completed");
-                                                System.out.println("Order status updated to Completed.");
+                                                Order selectedOrder = (Order) categories1.get(foodOrderID);
+                                                if (!selectedOrder.getStatus().equals("Completed")) {
+                                                    stub.updateOrderStatus(foodOrderID, "Completed");
+                                                    System.out.println("Order status updated to Completed.");
+                                                } else {
+                                                    System.out.println(BOLD_RED + "This order has already been completed." + RESET);
+                                                }
                                             } else {
                                                 System.out.println(BOLD_RED + "Please enter a valid food order ID." + RESET);
                                             }
@@ -596,27 +603,33 @@ public class Client {
                             System.out.println("3. Exit");
 
                             int userInput = 0;
-                                try {
-                                    System.out.print("Enter your option: ");
-                                    userInput = Integer.parseInt(scanner.next());
-                                    if (userInput == 3) {
-                                        break;
-                                    }
-                                    if (userInput < 1 || userInput > 3) {
-                                        throw new Exception(BOLD_RED + "Invalid option selected. Please enter a number between 1 to 3." + RESET);
-                                    }
-                                } catch (InputMismatchException e) {
-                                    System.out.println(BOLD_RED + "Please only key in an integer." + RESET);
-                                    scanner.nextLine();
-                                    Thread.sleep(1000);
-                                } catch (Exception e) {
-                                    System.out.println(BOLD_RED + "Please only key in an integer." + RESET);
-                                    Thread.sleep(1000);
+                            try {
+                                System.out.println("Enter your option: ");
+                                userInput = Integer.parseInt(scanner.nextLine());
+
+                                if (userInput==0) {
+                                    System.out.println(BOLD_RED + "Input cannot be empty. Please enter a valid option." + RESET);
+                                    continue;
                                 }
+                                if (userInput == 3) {
+                                    break;
+                                }
+                                if (userInput < 1 || userInput > 3) {
+                                    throw new Exception(BOLD_RED + "Invalid option selected. Please enter a number between 1 to 3." + RESET);
+                                }
+
+                            } catch (NumberFormatException e) {
+                                System.out.println(BOLD_RED + "Please only key in an integer." + RESET);
+                            } catch (Exception e) {
+                                System.out.println(e.getMessage());
+                            }
 
 
                             switch (userInput) {
                                 case 1:
+                                    System.out.println("\n-----------------------------------\n" +
+                                            "            User Registration        \n" +
+                                            "-----------------------------------");
                                     String username;
                                     String password;
                                     String firstName;
@@ -624,10 +637,8 @@ public class Client {
                                     String icOrPassportNumber;
                                     String phoneNumber;
                                     String address;
-
-                                    scanner.nextLine();
                                     username = Validation.getValidInput("Enter your username: ", Validation.USERNAME_PATTERN, Validation.USERNAME_ERROR);
-
+                                    scanner.nextLine();
                                     if(username==null) break;
 
                                     boolean isDuplicate = stub.checkDuplicate(username);
@@ -659,10 +670,13 @@ public class Client {
                                     break;
 
                                 case 2:
+                                    System.out.println("\n-----------------------------------\n" +
+                                            "            User Login        \n" +
+                                            "-----------------------------------");
                                     String inputUsername;
                                     String inputPassword;
                                     int count = 3;
-                                    scanner.nextLine();
+
                                     System.out.print("Enter your username: ");
                                     inputUsername = scanner.nextLine();
                                     if(inputUsername.equals("-1"))break;
@@ -1106,7 +1120,7 @@ public class Client {
                                                         System.out.println("2. Edit Password");
                                                         System.out.println("3. Edit First Name");
                                                         System.out.println("4. Edit Last Name");
-                                                        System.out.println("5. Edit icOrPassportNumber");
+                                                        System.out.println("5. Edit IC or passport number");
                                                         System.out.println("6. Edit Phone Number");
                                                         System.out.println("7. Edit Address");
                                                         System.out.println("8. Back to previous");
@@ -1135,24 +1149,26 @@ public class Client {
                                                         switch(editProfileOption){
                                                             case 1:
                                                                 username1 = Validation.getValidInput("Enter your username: ", Validation.USERNAME_PATTERN, Validation.USERNAME_ERROR);
-                                                                if(username1==null) break;
+                                                                if (username1 == null) break;
+                                                                loginCustomer.setUsername(username1);
+
                                                                 boolean isDuplicate1 = stub.checkDuplicate(username1);
                                                                 while (isDuplicate1) {
                                                                     System.out.println(BOLD_RED + "The username you have chosen is already taken." + RESET);
                                                                     username1 = Validation.getValidInput("Enter your username: ", Validation.USERNAME_PATTERN, Validation.USERNAME_ERROR);
-                                                                    if(username1==null)break;
+                                                                    if (username1 == null) break;
+                                                                    loginCustomer.setUsername(username1);
+
                                                                     isDuplicate1 = stub.checkDuplicate(username1);
-                                                                    if(!isDuplicate1){
-                                                                        loginCustomer.setUsername(username1);
-                                                                        break;
-                                                                    }
                                                                 }
+                                                                System.out.println("Username updated successfully.");
 
                                                                 break;
                                                             case 2:
                                                                 password1 = Validation.getValidInput("Enter your password: ", Validation.PASSWORD_PATTERN, Validation.PASSWORD_ERROR);
                                                                 if(password1==null) break;
                                                                 loginCustomer.setPassword(password1);
+                                                                System.out.println("Password updated successfully.");
                                                                 break;
                                                             case 3:
                                                                 firstName1 = Validation.getValidInput("Enter your first name: ", Validation.NAME_PATTERN, Validation.NAME_ERROR);
@@ -1163,28 +1179,34 @@ public class Client {
                                                                 lastName1 = Validation.getValidInput("Enter your last name: ", Validation.NAME_PATTERN, Validation.NAME_ERROR);
                                                                 if(lastName1==null) break;
                                                                 loginCustomer.setLastName(lastName1);
+                                                                System.out.println("Last name updated successfully.");
+
                                                                 break;
                                                             case 5:
                                                                 icOrPassportNumber1 = Validation.getValidInput("Please enter your Identity Card (IC) or Passport Number: ", Validation.IC_PATTERN, Validation.IC_ERROR);
                                                                 if(icOrPassportNumber1==null) break;
                                                                 loginCustomer.setIcOrPassportNumber(icOrPassportNumber1);
+                                                                System.out.println("IC or password port updated successfully.");
+
                                                                 break;
                                                             case 6:
                                                                 phoneNumber1 = Validation.getValidInput("Enter your phone number(01x-xx...): ",Validation.PHONE_PATTERN, Validation.PHONE_ERROR);
                                                                 if(phoneNumber1==null) break;
                                                                 loginCustomer.setPhoneNumber(phoneNumber1);
+                                                                System.out.println("Phone number updated successfully.");
+
                                                                 break;
                                                             case 7:
                                                                 address1 = Validation.getValidInput("Enter your address: ", Validation.ADDRESS_PATTERN, Validation.ADDRESS_ERROR);
                                                                 if(address1==null) break;
                                                                 loginCustomer.setAddress(address1);
+                                                                System.out.println("Address updated successfully.");
+
                                                                 break;
                                                             default:
                                                                 break;
                                                         }
-                                                        if(editProfileOption != 8){
-                                                            stub.updateProfile(loginCustomer.getCustomerId(), loginCustomer);
-                                                        }
+                                                        stub.updateProfile(loginCustomer.getCustomerId(), loginCustomer);
                                                     }
                                                     break;
                                                 default:
