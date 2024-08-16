@@ -7,23 +7,14 @@ public class Cart implements Serializable {
 
     private String foodID;
     private String customerName;
-    private FoodItems foodItem;
-    private DrinkItems drinkItem;
+    private MenuItem item; // This can be either a FoodItem or DrinkItem
     private final int quantity;
     private final double price;
 
-    public Cart(String foodID, String customerName, FoodItems foodItem, int quantity, double price) {
+    public Cart(String foodID, String customerName, MenuItem item, int quantity, double price) {
         this.foodID = foodID;
         this.customerName = customerName;
-        this.foodItem = foodItem;
-        this.quantity = quantity;
-        this.price = price;
-    }
-
-    public Cart(String foodID, String customerName, DrinkItems drinkItem, int quantity, double price) {
-        this.foodID = foodID;
-        this.customerName = customerName;
-        this.drinkItem = drinkItem;
+        this.item = item;
         this.quantity = quantity;
         this.price = price;
     }
@@ -44,17 +35,12 @@ public class Cart implements Serializable {
         return price;
     }
 
-    public FoodItems getFoodItem() {
-        return foodItem;
-    }
-
-    public DrinkItems getDrinkItem() {
-        return drinkItem;
+    public MenuItem getItem() {
+        return item;
     }
 
     @Override
     public String toString() {
-        String itemName = (foodItem != null) ? foodItem.getFoodName() : drinkItem.getFoodName();
-        return foodID + " (" + itemName + ") (" + quantity + ")";
+        return foodID + " (" + item.getFoodName() + ") (" + quantity + ")";
     }
 }

@@ -1,7 +1,7 @@
 import java.io.Serial;
 import java.io.Serializable;
 
-public class FoodItems implements Serializable {
+public class FoodItems implements MenuItem {
     @Serial
     private static final long serialVersionUID = -1618644082963435396L;
     private String foodID;

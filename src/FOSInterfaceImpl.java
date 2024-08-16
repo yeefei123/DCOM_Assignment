@@ -197,17 +197,17 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
     }
 
     @Override
-    public void createDrinkItems(String name, double price) throws RemoteException {
+    public void createDrinkItems(String name, double price, String foodCategory) throws RemoteException {
         drinkItems = (Map<String, DrinkItems>) readFromFile(DRINK_ITEM_FILE);
         int foodID = drinkItems.size() + 1;
         String foodID1 = String.valueOf(foodID);
-        DrinkItems newItem = new DrinkItems(foodID1, name, price);
+        DrinkItems newItem = new DrinkItems(foodID1, name, price, foodCategory);
         drinkItems.put(foodID1, newItem);
         writeToFile(DRINK_ITEM_FILE, drinkItems);
     }
 
     @Override
-    public void createCart(String customerName, FoodItems foodItem, int quantity, double price) throws RemoteException {
+    public void createCart(String customerName, MenuItem item, int quantity, double price) throws RemoteException {
         shoppingCart = (Map<String, Cart>) readFromFile(CART_FILE);
 
         if (shoppingCart == null) {
@@ -227,13 +227,14 @@ public class FOSInterfaceImpl extends UnicastRemoteObject implements FOSInterfac
         int newID = maxID + 1;
         String cartIDString = String.valueOf(newID);
 
-        Cart newItem = new Cart(cartIDString, customerName, foodItem, quantity, price);
+        Cart newItem = new Cart(cartIDString, customerName, item, quantity, price);
         shoppingCart.put(cartIDString, newItem);
 
         System.out.println("Adding to cart: " + newItem);
 
         writeToFile(CART_FILE, shoppingCart);
     }
+
 
 
     @Override

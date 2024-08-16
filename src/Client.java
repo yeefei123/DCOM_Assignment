@@ -306,7 +306,7 @@ public class Client {
                                                             FoodCategory foodCategory = (FoodCategory) categories1.get(foodCategoryID);
                                                             String categoryName = foodCategory.getCategoryName();
                                                             if (!foodCategoryID.isEmpty() && !foodName.isEmpty() && foodPrice > 0) {
-                                                                stub.createFoodItems(foodName, foodPrice, categoryName);
+                                                                stub.createFoodItems(foodName, foodPrice, foodCategoryID);
                                                                 System.out.println("Food Item created successfully.");
                                                                 System.out.println("*".repeat(40));
                                                             } else {
@@ -326,7 +326,7 @@ public class Client {
                                                         double drinkPrice = Double.parseDouble(scanner.nextLine());
                                                         if (drinkPrice == -1) break;
                                                         if (drinkPrice > 0) {
-                                                            stub.createDrinkItems(drinkName, drinkPrice);
+                                                            stub.createDrinkItems(drinkName, drinkPrice, "BV");
                                                             System.out.println("Drink Item created successfully.");
                                                             System.out.println("*".repeat(40));
                                                         }
@@ -421,6 +421,7 @@ public class Client {
                                                 }
                                                 if (categories1.containsKey(foodID)) {
                                                     stub.delete(foodID, "item");
+                                                    System.out.println("Food item deleted succesfully.");
                                                 } else {
                                                     System.out.println(BOLD_RED + "Food item ID not found." + RESET);
                                                 }
@@ -468,10 +469,10 @@ public class Client {
                                     }
                                 }else if (answer==4){
                                     while (true) {
-                                        System.out.println("\n-----------------------------------\n" +
-                                                "         View Total Sales      \n" +
-                                                "-----------------------------------\n" +
-                                                "1. View total sales per day" + "\n2. View total sales per week" + "\n3. View total sales per month" + "\n4. Exit");
+                                        System.out.println("\n------------------------------------\n" +
+                                                "         View Summary Report      \n" +
+                                                "------------------------------------\n" +
+                                                "1. View daily summary report" + "\n2. View weekly summary report" + "\n3. View monthly summary report" + "\n4. Exit");
                                         System.out.println("Enter number to choose:");
                                         int salesChoice = 0;
                                         try {
@@ -782,8 +783,8 @@ public class Client {
                                                         System.out.println("*".repeat(40));
                                                         System.out.println("Selected items:");
                                                         for (Cart item : selectedItems) {
-                                                            double itemTotalPrice = item.getFoodItem().getFoodPrice() * item.getQuantity();
-                                                            System.out.println(item.getFoodItem().getFoodName() + " - Quantity: " + item.getQuantity() + ", Total price: " + itemTotalPrice);
+                                                            double itemTotalPrice = item.getItem().getFoodPrice() * item.getQuantity();
+                                                            System.out.println(item.getItem().getFoodName() + " - Quantity: " + item.getQuantity() + ", Total price: " + itemTotalPrice);
                                                         }
                                                         System.out.println("Total price for all selected items: " + totalPrice);
 
@@ -791,7 +792,7 @@ public class Client {
                                                         String answer = scanner.nextLine();
                                                         if (answer.equalsIgnoreCase("y")) {
                                                             for (Cart item : selectedItems) {
-                                                                stub.createCart(loggedInUsername, item.getFoodItem(), item.getQuantity(), item.getPrice());
+                                                                stub.createCart(loggedInUsername, item.getItem(), item.getQuantity(), item.getPrice());
                                                             }
                                                             System.out.println("Items added to cart successfully.");
                                                         } else {
@@ -857,6 +858,28 @@ public class Client {
                                                         drinkSelectedItems.add(new Cart(null, loggedInUsername, selectedItem, foodQuantity, price));
                                                         System.out.println("Items selected successfully.");
                                                     }
+
+                                                    if (!drinkSelectedItems.isEmpty()) {
+                                                        System.out.println("*".repeat(40));
+                                                        System.out.println("Selected items:");
+                                                        for (Cart item : drinkSelectedItems) {
+                                                            double itemTotalPrice = item.getItem().getFoodPrice() * item.getQuantity();
+                                                            System.out.println(item.getItem().getFoodName() + " - Quantity: " + item.getQuantity() + ", Total price: " + itemTotalPrice);
+                                                        }
+                                                        System.out.println("Total price for all selected items: " + drinkTotalPrice);
+
+                                                        System.out.println("Do you want to add these selected items into your cart? Enter y or n");
+                                                        String answer = scanner.nextLine();
+                                                        if (answer.equalsIgnoreCase("y")) {
+                                                            for (Cart item : drinkSelectedItems) {
+                                                                stub.createCart(loggedInUsername, item.getItem(), item.getQuantity(), item.getPrice());
+                                                            }
+                                                            System.out.println("Items added to cart successfully.");
+                                                        } else {
+                                                            System.out.println(BOLD_RED + "Items not added to cart." + RESET);
+                                                        }
+                                                        System.out.println("*".repeat(40));
+                                                    }
                                                     break;
                                                 case 3:
                                                     while (true) {
@@ -891,7 +914,7 @@ public class Client {
                                                                                 i++;
                                                                                 cartIDs.add(entry.getKey());
                                                                                 totalOrderPrice += cartItem.getPrice();
-                                                                                System.out.println(cartItem.getFoodID() + ": " + cartItem.getFoodItem() + " X " + cartItem.getQuantity() + " Price:" + cartItem.getPrice());
+                                                                                System.out.println(cartItem.getFoodID() + ": " + cartItem.getItem() + " X " + cartItem.getQuantity() + " Price:" + cartItem.getPrice());
                                                                             }
                                                                         }
 
@@ -947,13 +970,13 @@ public class Client {
                                                                                 }
 
                                                                                 System.out.println("Selected Cart Item:");
-                                                                                System.out.println("Food Item: " + selectedCartItem.getFoodItem() + " X " + selectedCartItem.getQuantity() + " Price: " + selectedCartItem.getPrice());
+                                                                                System.out.println("Food Item: " + selectedCartItem.getItem() + " X " + selectedCartItem.getQuantity() + " Price: " + selectedCartItem.getPrice());
 
                                                                                 System.out.println("Do you want to place the order for this food item? Enter y or n");
                                                                                 String answer1 = scanner.nextLine();
                                                                                 if (answer1.equalsIgnoreCase("y")) {
                                                                                     try {
-                                                                                        stub.createOrder(loggedInUsername, selectedCartItem.getFoodItem().getFoodName(), selectedCartItem.getQuantity(), selectedCartItem.getPrice(), orderStatus, "Pending");
+                                                                                        stub.createOrder(loggedInUsername, selectedCartItem.getItem().getFoodName(), selectedCartItem.getQuantity(), selectedCartItem.getPrice(), orderStatus, "Pending");
                                                                                         stub.setBalance(loggedInUsername, currentBalance - orderPrice);
                                                                                         cartItems.remove(String.valueOf(cartNumber));
                                                                                         stub.updateCartData(cartItems);
@@ -988,7 +1011,7 @@ public class Client {
                                                                             for (Map.Entry<String, ?> entry : cartItems1.entrySet()) {
                                                                                 Cart cartItem = (Cart) entry.getValue();
                                                                                 if (cartItem.getCustomerName().equals(loggedInUsername)) {
-                                                                                    System.out.println(entry.getKey() + ": " + cartItem.getFoodItem() + " X " + cartItem.getQuantity() + " Price: " + cartItem.getPrice());
+                                                                                    System.out.println(entry.getKey() + ": " + cartItem.getItem() + " X " + cartItem.getQuantity() + " Price: " + cartItem.getPrice());
                                                                                 }
                                                                             }
                                                                         }
@@ -1135,10 +1158,10 @@ public class Client {
                                                                     System.out.println("Last name updated successfully");
                                                                     continue;
                                                                 case 5:
-                                                                    icOrPassportNumber = Validation.getValidInput("Please enter your Identity Card (IC) or Passport Number: ", Validation.IC_PATTERN, Validation.IC_ERROR);
+                                                                    icOrPassportNumber = Validation.getValidInput("Please enter your Identity Card (IC) or passport number : ", Validation.IC_PATTERN, Validation.IC_ERROR);
                                                                     if (icOrPassportNumber.equals("-1")) break;
                                                                     loginCustomer.setIcOrPassportNumber(icOrPassportNumber);
-                                                                    System.out.println("IC updated successfully");
+                                                                    System.out.println("IC or passport number updated successfully");
                                                                     continue;
                                                                 case 6:
                                                                     phoneNumber = Validation.getValidInput("Enter your phone number(01x-xx...): ", Validation.PHONE_PATTERN, Validation.PHONE_ERROR);

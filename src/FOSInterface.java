@@ -1,6 +1,7 @@
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Map;
+import java.util.Objects;
 
 public interface FOSInterface extends Remote {
     boolean checkDuplicate(String userName) throws RemoteException;
@@ -19,11 +20,11 @@ public interface FOSInterface extends Remote {
     void updateFoodCategoryName(String categoryID, String newCategoryName) throws RemoteException;
 
     void createFoodItems(String name, double price, String foodCategory) throws RemoteException;
-    void createDrinkItems(String name, double price) throws RemoteException;
+    void createDrinkItems(String name, double price, String foodCategory) throws RemoteException;
     void updateFoodItemName(String foodID, String newFoodName) throws RemoteException;
     void updateFoodItemPrice(String foodID, double newFoodPrice) throws RemoteException;
 
-    void createCart(String customerName, FoodItems foodItems, int quantity, double price) throws RemoteException;
+    void createCart(String customerName, MenuItem foodItems, int quantity, double price) throws RemoteException;
 
     void updateCartData(Map<String, ?> updatedCartData) throws RemoteException;
 
