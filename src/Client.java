@@ -135,8 +135,17 @@ public class Client {
                                                 System.out.println("Enter food category ID to add:");
                                                 String categoryID = scanner.nextLine();
                                                 if (categoryID.equals("-1")) break;
+                                                if(categoryID.isEmpty()){
+                                                    System.out.println(BOLD_RED+"Please enter valid food category ID"+RESET);
+                                                    continue;
+                                                }
                                                 System.out.println("Enter food category name:");
                                                 String categoryName = scanner.nextLine();
+                                                if(categoryName.equals("-1"))break;
+                                                if(categoryName.isEmpty()){
+                                                    System.out.println(BOLD_RED+"Please enter food category name"+RESET);
+                                                    continue;
+                                                }
                                                 stub.createFoodCategory(categoryID, categoryName);
                                                 System.out.println("Food category created successfully.");
                                                 break;
@@ -187,7 +196,7 @@ public class Client {
                                                 break;
                                             case 4:
                                                 while (true) {
-                                                    System.out.println("\n═════════════ Update Food Category ══════════════");
+                                                    System.out.println("\n═════════════ Delete Food Category ══════════════");
                                                     Map<String, ?> categories1 = stub.viewFoodData("FoodCategory");
                                                     if (categories1.isEmpty()) {
                                                         System.out.println(BOLD_RED + "No food categories found." + RESET);
@@ -283,9 +292,18 @@ public class Client {
                                                         System.out.println("Enter food item name to add:");
                                                         String foodName = scanner.nextLine().trim();
                                                         if (foodName.equals("-1")) break;
-                                                        System.out.println("Enter food price:");
-                                                        double foodPrice = Double.parseDouble(scanner.nextLine());
-                                                        if (foodPrice == -1) break;
+                                                        if(foodName.isEmpty()){
+                                                            System.out.println(BOLD_RED+"Please valid food name."+RESET);
+                                                            continue;
+                                                        }
+                                                        double foodPrice = 0;
+                                                        try {
+                                                            System.out.println("Enter food price:");
+                                                            foodPrice = Double.parseDouble(scanner.nextLine());
+                                                            if (foodPrice == -1) break;
+                                                        }catch (Exception e){
+                                                            System.out.println(BOLD_RED+"Please enter valid food price."+RESET);
+                                                        }
                                                         Map<String, ?> categories1 = stub.viewFoodData("FoodCategory");
                                                         if (categories1.isEmpty()) {
                                                             System.out.println("*".repeat(40));
@@ -299,8 +317,8 @@ public class Client {
                                                             System.out.println("*".repeat(40));
                                                         }
                                                         System.out.println("Enter food category ID for the new food item or -1 to exit:");
-                                                        String foodCategoryID = scanner.nextLine().trim();
-                                                        if (foodPrice == -1) break;
+                                                        String foodCategoryID = scanner.nextLine();
+                                                        if(foodCategoryID.equals("-1"))break;
 
                                                         if (categories1.containsKey(foodCategoryID)) {
                                                             FoodCategory foodCategory = (FoodCategory) categories1.get(foodCategoryID);
@@ -638,7 +656,7 @@ public class Client {
                                     String phoneNumber;
                                     String address;
                                     username = Validation.getValidInput("Enter your username: ", Validation.USERNAME_PATTERN, Validation.USERNAME_ERROR);
-                                    scanner.nextLine();
+
                                     if(username==null) break;
 
                                     boolean isDuplicate = stub.checkDuplicate(username);
@@ -990,6 +1008,10 @@ public class Client {
 
                                                                                 System.out.println("Do you want to place the order for this food item? Enter y or n");
                                                                                 String answer1 = scanner.nextLine();
+                                                                                if(answer1.isEmpty()){
+                                                                                    System.out.println(BOLD_RED+"Invalid choice. PLease try again."+RESET);
+                                                                                    continue;
+                                                                                }
                                                                                 if (answer1.equalsIgnoreCase("y")) {
                                                                                     try {
                                                                                         stub.createOrder(loggedInUsername, selectedCartItem.getItem().getFoodName(), selectedCartItem.getQuantity(), selectedCartItem.getPrice(), orderStatus, "Pending");

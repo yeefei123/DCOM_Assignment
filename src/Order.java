@@ -13,7 +13,6 @@ public class Order implements Serializable {
     private String orderType;
     private String status;
     private LocalDateTime orderTime;
-//    private double totalPrice;
 
     public Order(int orderId, String customerName, String item, int quantity, double price, String orderType, String status, LocalDateTime orderTime) {
         this.orderId = orderId;
@@ -24,7 +23,6 @@ public class Order implements Serializable {
         this.orderType = orderType;
         this.status = status;
         this.orderTime = orderTime;
-//        this.totalPrice = calculateTotalPrice();
     }
 
     public int getOrderId() {
